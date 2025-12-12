@@ -145,6 +145,20 @@
     border-radius: 6px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.15);
   }
+
+  .profession_summury_table table{
+    width: 100%;
+    border-collapse: collapse; /* important */
+  }
+
+  .profession_summury_table table, th, td {
+    border: 1px solid #c8c8c8;
+    border-width:thin !important;
+  }
+
+  .profession_summury_table th, td {
+    padding: 8px 12px;
+  }
 </style>
 @endsection
 
@@ -573,6 +587,75 @@
                     Please Select all specialties you have experience in:
 
                   </h6>
+                  <div class="profession_summury_table">
+                    <table class="table table-bordered">
+                      <thead>
+                        <tr>
+                          <th>Type of Nurse</th>
+                          <th>Specialty</th>
+                          <th>Status</th>
+                          <th>Years of Experience</th>
+                          <th>End Date / Last Practiced</th>
+                          <th>Employment Type</th>
+                          <th>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @foreach ($specialities_data as $spec)
+                        <tr>
+                          <td>
+                            
+                            <ol type="1" style="list-style: decimal;">
+                              @foreach ($nurse_data as $values)
+                              @php
+                                $nurse_datas = DB::table("practitioner_type")->where("id",$values)->first();
+                              @endphp
+                              <li>{{ $nurse_datas->name }}</li>
+                             
+                              @endforeach
+                            </ol>
+                          </td>
+                          <td>
+                            
+                              
+                              @php
+                                $speciality_datas = DB::table("speciality")->where("id",$spec)->first();
+                              @endphp
+                              {{ $speciality_datas->name }}
+                            
+                          </td>
+                          <td>
+                            
+                            
+                              
+                              @php
+                                
+                                $speciality_status = isset($specialities_type['speciality_status'])?(array)$specialities_type['speciality_status']:[];
+                                
+                              @endphp
+                              @foreach($speciality_status as $key=>$s_status)
+                                <?php
+                                  $parts1 = explode('_', $key);
+                                  $sp_data_name = DB::table("speciality")->where('id', $parts1[1])->first();
+                                  $speciality_status_data = DB::table("speciality_status")->get();
+                                ?>
+                                @if ($parts1[1] == $spec)
+                                {{ $s_status->status }}
+                                @endif
+                              @endforeach
+                              
+                             
+                            
+                          </td>
+                          <td>{{ $user_data->assistent_level }} years</td>
+                          <td>-</td>
+                          <td>{{ $user_data->current_employee_status }}</td>
+                          <td><button class="btn">Edit</button></td>
+                        </tr>
+                        @endforeach
+                      </tbody>
+                    </table>
+                  </div>
                   <form id="profession_form" method="POST" onsubmit="return myFunction1()">
                     @csrf
                     <div class="condition_set">
@@ -789,7 +872,7 @@
                           </div>
                           <div class="subspec_level-{{ $parts[1] }}"></div>
                         </div>
-                        <div class="subspec_level-{{ $parts[1] }}">
+                        <div class="show_specialities-{{ $parts[1] }}">
                           <?php
                                 $speciality_status = isset($specialities_type['speciality_status'])?(array)$specialities_type['speciality_status']:[];
                                 //print_r($specialities_type['speciality_status']);
@@ -809,7 +892,7 @@
                                     <label class="form-label subspeclabel-{{ $parts1[1] }}" for="input-1">
                                       Specialty Status ({{ $sp_data_name->name }}) 
                                       <span class="info tooltip-btn" tabindex="0" aria-describedby="statusTooltip">ⓘ</span>
-                                      <div id="statusTooltip" class="tooltip_speciality_status" role="tooltip">
+                                       <div id="statusTooltip" class="tooltip_speciality_status" role="tooltip">
                                         <h3>Status definitions:</h3>
                                         <ul style="padding-left:18px; margin:8px 0 0 0">
                                           <li><strong>Current:</strong> Actively practicing, used in present or most recent job.</li>
@@ -825,7 +908,7 @@
                                     <select class="custom-select speciality_status_column speciality_status_column-{{ $parts1[1] }} form-input mr-10 select-active langprof_level_valid-{{ $parts1[1] }}" name="specialties[speciality_status][type_{{ $parts1[1] }}][status]" onchange="changeSpecialityStatus(this.value,{{ $parts1[1] }})">
                                       <option value="">select</option>
                                       @foreach($speciality_status_data as $s_status_data)
-                                      <option value="{{ $s_status_data->status_name }}" @if($s_status_data->status_name == $s_status) selected @endif>{{ $s_status_data->status_name }}</option>
+                                      <option value="{{ $s_status_data->status_name }}" @if($s_status_data->status_name == $s_status->status) selected @endif>{{ $s_status_data->status_name }}</option>
                                       @endforeach
                                       
                                     </select>

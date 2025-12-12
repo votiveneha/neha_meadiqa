@@ -149,7 +149,28 @@ class HomeController extends Controller
     public function manage_profile($message = '')
     {
         $employeement_type_preferences = DB::table("employeement_type_preferences")->where("sub_prefer_id","0")->get();
-        return view('nurse.profile', compact('message','employeement_type_preferences'));
+        $user_id = Auth::guard('nurse_middle')->user()->id;    
+        $user_data = User::where("id",$user_id)->first();
+        $nurse_data = [];
+        $specialities_data = [];
+
+        foreach (json_decode($user_data->nurse_data) as $key => $values) {
+            if ($key !== 'type_0') {
+                
+                $nurse_data = array_merge($nurse_data, $values);
+            }
+        }
+
+        foreach (json_decode($user_data->specialties) as $key => $values) {
+            if ($key !== 'type_0' && $key !== 'speciality_status') {
+                
+                $specialities_data = array_merge($specialities_data, $values);
+            }
+        }
+
+        $specialities_type = (array)json_decode($user_data->specialties);
+        //print_r($specialities_data);
+        return view('nurse.profile', compact('message','employeement_type_preferences','nurse_data','specialities_data','specialities_type','user_data'));
     }
     public function upload_profile_image(Request $request)
     {
