@@ -1428,11 +1428,11 @@
                     ?>
                     @endforeach
                     </ul>
-                    <select class="js-example-basic-multiple${previous_employeers_head} addAll_removeAll_btn nurse_type_exp nurse_type_exp_${previous_employeers_head}" data-list-id="type-of-nurse-experience-${previous_employeers_head}" name="nurseType[${previous_employeers_head}][]" id="nurse_type_experience" multiple="multiple" index_id="${previous_employeers_head}"></select>
+                    <select class="js-example-basic-multiple${previous_employeers_head} addAll_removeAll_btn nurse_type_exp nurse_type_exp_${previous_employeers_head}" data-list-id="type-of-nurse-experience-${previous_employeers_head}-0" name="nurseType[${previous_employeers_head}][]" id="nurse_type_experience" multiple="multiple" onchange="getNurseTypeExperience('main',0,${previous_employeers_head})" index_id="${previous_employeers_head}"></select>
                     <span id="reqnurseTypeexpId-${previous_employeers_head}" class="reqError text-danger valley"></span>
                 </div>
-                
-                <div class="result--show result_show_nurse">
+                <div class="showNurseTypeExperience-${previous_employeers_head}-0"></div>
+                <div class="result--show result_show_nurse" style="display:none;">
                     <div class="container p-0">
                         <div class="row g-2">
                         @php $specialty = specialty();$spcl=$specialty[0]->id;@endphp
@@ -1483,7 +1483,7 @@
                     <div class="form-group drp--clr">
                         <input type="hidden" name="sub_speciality_value" class="sub_speciality_value" value="">
                         <label class="form-label" for="input-1">Specialties</label>
-                        <ul id="specialties_experience-${previous_employeers_head}" style="display:none;">
+                        <ul id="specialties_experience-${previous_employeers_head}-0" style="display:none;">
                             @php $JobSpecialties = JobSpecialties(); @endphp
                             <?php
                             $k = 1;
@@ -1495,12 +1495,13 @@
                             ?>
                             @endforeach
                         </ul>
-                        <select class="js-example-basic-multiple${previous_employeers_head} addAll_removeAll_btn spec_exp spec_exp_${previous_employeers_head}" data-list-id="specialties_experience-${previous_employeers_head}" name="specialties_experience[${previous_employeers_head}][]" multiple="multiple"></select>
+                        <select class="js-example-basic-multiple${previous_employeers_head} addAll_removeAll_btn spec_exp spec_exp_${previous_employeers_head}" data-list-id="specialties_experience-${previous_employeers_head}-0" name="specialties_experience[${previous_employeers_head}][]" onchange="getSecialitiesExperience('main',0,${previous_employeers_head})" multiple="multiple"></select>
                         <span id="reqspecialtiesexp-${previous_employeers_head}" class="reqError text-danger valley"></span>
                     </div>
                     
                 </div>
-                <div class="speciality_boxes row result--show">
+                <div class="show_specialitiesExperience-${previous_employeers_head}-0"></div>
+                <div class="speciality_boxes row result--show" style="display:none">
                     <?php
                     $l = 1;
                     ?>
@@ -3171,41 +3172,41 @@
         }
     }
 
-    $(document).on('change', '.specialties_experience', function() {
-        let selectedValues = $(this).val();
-        let index = $(this).attr('index_value');
-        var speciality_len = $("#specialties_type_experience-1 li").length;
+    // $(document).on('change', '.specialties_experience', function() {
+    //     let selectedValues = $(this).val();
+    //     let index = $(this).attr('index_value');
+    //     var speciality_len = $("#specialties_type_experience-1 li").length;
 
-        for (var k = 1; k <= speciality_len; k++) {
-            var speciality_result_val = $(".speciality_exp_result-" + k + '-' + index).val();
-            if (selectedValues.includes(speciality_result_val)) {
-                $('#specility_level_exp-' + k + '-' + index).removeClass('d-none');
-            } else {
-                $('#specility_level_exp-' + k + '-' + index).addClass('d-none');
-                $('.js-example-basic-multiple[data-list-id="speciality_entry_exp-' + k + '-' + index + '"]').select2().val(null).trigger('change');
-            }
-        }
+    //     for (var k = 1; k <= speciality_len; k++) {
+    //         var speciality_result_val = $(".speciality_exp_result-" + k + '-' + index).val();
+    //         if (selectedValues.includes(speciality_result_val)) {
+    //             $('#specility_level_exp-' + k + '-' + index).removeClass('d-none');
+    //         } else {
+    //             $('#specility_level_exp-' + k + '-' + index).addClass('d-none');
+    //             $('.js-example-basic-multiple[data-list-id="speciality_entry_exp-' + k + '-' + index + '"]').select2().val(null).trigger('change');
+    //         }
+    //     }
 
-        if (!selectedValues.includes("1")) {
-            $('.subvaluedata_' + index).addClass('d-none');
-            $('.surgical_row_data_experience_' + index).addClass('d-none');
-            $('.sur_exp_' + index).select2().val(null).trigger('change');
-        }
+    //     if (!selectedValues.includes("1")) {
+    //         $('.subvaluedata_' + index).addClass('d-none');
+    //         $('.surgical_row_data_experience_' + index).addClass('d-none');
+    //         $('.sur_exp_' + index).select2().val(null).trigger('change');
+    //     }
 
-        if (selectedValues.includes("2") == false) {
-            $('.surgicalobs_row_exp_' + index).addClass('d-none');
-            $('.js-example-basic-multiple[data-list-id="surgicalobs_row_data_experience_' + index + '"]').select2().val(null).trigger('change');
-        }
+    //     if (selectedValues.includes("2") == false) {
+    //         $('.surgicalobs_row_exp_' + index).addClass('d-none');
+    //         $('.js-example-basic-multiple[data-list-id="surgicalobs_row_data_experience_' + index + '"]').select2().val(null).trigger('change');
+    //     }
 
-        if (selectedValues.includes("3") == false) {
-            $('.surgicalpad_row_data_exp_' + index).addClass('d-none');
-            $('.surgical_rowp_exp_' + index).addClass('d-none');
-            $('.neonatal_row_exp_' + index).addClass('d-none');
-            $('.js-example-basic-multiple[data-list-id="surgical_rowpad_box_exp_' + index + '"]').select2().val(null).trigger('change');
-            $('.js-example-basic-multiple[data-list-id="surgical_operative_care_experience-' + k + '-' + index + '"]').select2().val(null).trigger('change');
-            //$('.js-example-basic-multiple[data-list-id="surgicalobs_row_data"]').select2().val(null).trigger('change');
-        }
-    });
+    //     if (selectedValues.includes("3") == false) {
+    //         $('.surgicalpad_row_data_exp_' + index).addClass('d-none');
+    //         $('.surgical_rowp_exp_' + index).addClass('d-none');
+    //         $('.neonatal_row_exp_' + index).addClass('d-none');
+    //         $('.js-example-basic-multiple[data-list-id="surgical_rowpad_box_exp_' + index + '"]').select2().val(null).trigger('change');
+    //         $('.js-example-basic-multiple[data-list-id="surgical_operative_care_experience-' + k + '-' + index + '"]').select2().val(null).trigger('change');
+    //         //$('.js-example-basic-multiple[data-list-id="surgicalobs_row_data"]').select2().val(null).trigger('change');
+    //     }
+    // });
 
     $(document).on('change', '.surgical_subtype', function() {
         let selectedValues = $(this).val(); // Get selected values
