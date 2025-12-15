@@ -2035,6 +2035,7 @@ public function ResetPassword(Request $request)
         
         $facility_workplace_name = $request->facility_workplace_name;
         $nurseTypes = $request->input('nurseType', []);
+        
         $nursingType1 = $request->input('nursing_type_1', []);
         $nursingType2 = $request->input('nursing_type_2', []);
         $nursingType3 = $request->input('nursing_type_3', []);
@@ -2194,6 +2195,7 @@ public function ResetPassword(Request $request)
                     'tech_and_soft_pro' => json_encode($sub_skills_compantancies4_1),
                     'declaration_status' => $dec_status
                 ]);
+                $experi_id = "";
             } else {
                 $user_stage = update_user_stage($userId,"Experience");
                 
@@ -2243,10 +2245,11 @@ public function ResetPassword(Request $request)
                 $newExperience->declaration_status = $dec_status;
 
                 $run = $newExperience->save();
+                $experi_id = $newExperience->id;
             }
         }
 
-        $experi_id = $newExperience->id;
+        
         // echo $experi_id;die;
         if ($run) {
             $json['status'] = 1;
@@ -2268,6 +2271,7 @@ public function ResetPassword(Request $request)
         $first_name = $request->first_name;
         $last_name = $request->last_name;
         $email = $request->email;
+        $referee_no = $request->referee_no;
         $phone_no = $request->phone_no;
         $reference_relationship = $request->reference_relationship;
         $worked_together = $request->worked_together;
@@ -2282,18 +2286,18 @@ public function ResetPassword(Request $request)
         $referee_no_array = array();
 
         foreach ($getrefereedata as $r_data) {
-            $referee_no_array[] = $r_data->email;
+            $referee_no_array[] = $r_data->referee_no;
         }
 
         //print_r($referee_no_array);die;
         for ($i = 0; $i < count($first_name); $i++) {
-            if (in_array($email[$i], $referee_no_array)) {
+            if (in_array($referee_no[$i], $referee_no_array)) {
                 // if (isset($still_working[$i])) {
                 //     $working = 1;
                 // } else {
                 //     $working = 0;
                 // }
-                $run = AddReferee::where('user_id', $user_id)->where('email', $email[$i])->update(['first_name' => $first_name[$i], 'last_name' => $last_name[$i], 'email' => $email[$i], 'phone_no' => $phone_no[$i], 'relationship' => $reference_relationship[$i], 'worked_together' => $worked_together[$i], 'position_with_referee' => json_encode($position_with_referee[$i+1]), 'start_date' => $start_date[$i], 'end_date' => $end_date[$i], 'still_working' => $still_working[$i], 'is_declare' => 1]);
+                $run = AddReferee::where('user_id', $user_id)->where('referee_no', $referee_no[$i])->update(['first_name' => $first_name[$i], 'last_name' => $last_name[$i], 'email' => $email[$i], 'phone_no' => $phone_no[$i], 'relationship' => $reference_relationship[$i], 'worked_together' => $worked_together[$i], 'position_with_referee' => json_encode($position_with_referee[$i+1]), 'start_date' => $start_date[$i], 'end_date' => $end_date[$i], 'still_working' => $still_working[$i], 'is_declare' => 1]);
             } else {
                 $user_stage = update_user_stage($user_id,"References");
                 if (isset($still_working[$i])) {

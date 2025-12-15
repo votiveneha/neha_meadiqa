@@ -3387,7 +3387,7 @@
                             ?>
                             @endforeach
                           </ul>
-                          <select class="js-example-basic-multiple addAll_removeAll_btn nurse_level_ep nurse_type_exp nurse_type_exp_{{$i}}" data-list-id="type-of-nurse-experience-{{$i}}-0" name="nurseType[{{$i}}][]" id="nurse_type_exp-{{ $i }}-0" multiple="multiple" onchange="getNurseTypeExperience('main',0,{{ $i }})"></select>
+                          <select class="js-example-basic-multiple addAll_removeAll_btn nurse_level_ep nurse_type_exp nurse_type_exp_{{$i}}" data-list-id="type-of-nurse-experience-{{$i}}-0" name="nurseType[{{$i}}][type_0][]" id="nurse_type_exp-{{ $i }}-0" multiple="multiple" onchange="getNurseTypeExperience('main',0,{{ $i }})"></select>
                           <span id="reqnurseTypeexpId-{{$i}}" class="reqError text-danger valley"></span>
                         </div>
                         <div class="showNurseTypeExperience-{{$i}}-0"></div>
@@ -3466,12 +3466,12 @@
                               @endforeach
 
                             </ul>
-                            <select id="specialties_experienceID" class="js-example-basic-multiple  spec_exp spec_exp_{{$i}} specialties_experience addAll_removeAll_btn exp_spe_type_{{$i}}" index_value="{{ $i}}" data-list-id="specialties_type_experience-{{ $i }}-0" name="specialties_experience[{{ $i }}][]" multiple="multiple" onchange="getSecialitiesExperience('main',0,{{ $i }})"></select>
+                            <select id="specialties_experienceID" class="js-example-basic-multiple  spec_exp spec_exp_{{$i}} specialties_experience addAll_removeAll_btn exp_spe_type_{{$i}}" index_value="{{ $i}}" data-list-id="specialties_type_experience-{{ $i }}-0" name="specialties_experience[{{ $i }}][type_0][]" multiple="multiple" onchange="getSecialitiesExperience('main',0,{{ $i }})"></select>
                           </div>
                           <span id="reqspecialtiesexp-{{ $i }}" class="reqError text-danger valley"></span>
                         </div>
                         <div class="show_specialitiesExperience-{{ $i }}-0"></div>
-                        <div class="speciality_boxes row result--show">
+                        <div class="speciality_boxes row result--show" style="display:none;">
                           <input type="hidden" name="adults_result_experience" class="adults_result_experience_{{$i}}" value="{{ $data->adults }}">
                           <input type="hidden" name="maternity_result_experience" class="maternity_result_experience_{{$i}}" value="{{ $data->maternity }}">
                           <input type="hidden" name="community_result_experience" class="community_result_experience_{{$i}}" value="{{ $data->community }}">
@@ -4569,6 +4569,7 @@
                         <div class="col-md-6">
                           <div class="form-group level-drp">
                             <label class="form-label" for="input-1">First name</label>
+                            <input type="hidden" name="referee_no[]" value="{{ $referee_data->referee_no }}">
                             <input type="hidden" name="reference_no[]" value="{{ $i }}">
                             <input class="form-control first_name first_name-{{ $i }}" type="text" name="first_name[]" value="{{ $referee_data->first_name }}">
                             <span id="reqfname-{{ $i }}" class="reqError text-danger valley"></span>
@@ -4757,6 +4758,7 @@
                       <div class="col-md-6">
                         <div class="form-group level-drp">
                           <label class="form-label" for="input-1">First name</label>
+                          <input type="hidden" name="referee_no[]" value="0">
                           <input class="form-control first_name first_name-1" type="text" name="first_name[]">
                           <span id="reqfname-1" class="reqError text-danger valley"></span>
                         </div>
@@ -4981,7 +4983,7 @@
                   console.log("emp_data", new_emp_data);
                   ////console.log("licence_div_count", referee_div_count);
                   referee_div_count++;
-                  $(".reference_form").append('<div class="referee_data referee_data-' + referee_div_count + '"><h6 class="mt-0 color-brand-1 mb-20 referee_no">REFEREE ' + referee_div_count + '</h6><div class="row"><div class="col-md-6"><div class="form-group level-drp"><label class="form-label" for="input-1">First name</label><input class="form-control first_name first_name-' + referee_div_count + '" type="text" name="first_name[]"><span id="reqfname-' + referee_div_count + '" class="reqError text-danger valley"></span></div></div><div class="col-md-6"><div class="form-group level-drp"><label class="form-label" for="input-1">Last name</label><input class="form-control last_name last_name-' + referee_div_count + '" type="text" name="last_name[]"><span id="reqlname-' + referee_div_count + '" class="reqError text-danger valley"></span></div></div></div><div class="row"><div class="col-md-6"><div class="form-group level-drp"><label class="form-label" for="input-1">Email</label><input class="form-control reference_email reference_email-' + referee_div_count + '" type="text" name="email[]"><span id="reqemail-' + referee_div_count + '" class="reqError text-danger valley"></span></div></div><div class="col-md-6"><div class="form-group level-drp"><label class="form-label" for="input-1">Phone number</label><input class="form-control phone_no phone_no-' + referee_div_count + '" type="text" name="phone_no[]"><span id="reqphoneno-' + referee_div_count + '" class="reqError text-danger valley"></span></div></div></div><div class="row"><div class="col-md-6"><div class="form-group level-drp"><label class="form-label" for="input-1">Referee relationship to you</label><select class="form-input reference_relationship reference_relationship-' + referee_div_count + '" name="reference_relationship[]"><option value="" data-select2-id="9">select</option><option value="Worked in Same Group">Worked in Same Group</option><option value="Referee Managed Me">Referee Managed Me</option><option value="I Managed Referee">I Managed Referee</option><option value="Worked Together on a Project">Worked Together on a Project</option><option value="Worked Together in Different Departments">Worked Together in Different Departments</option><option value="Colleague">Colleague</option><option value="Peer Mentor">Peer Mentor</option><option value="Clinical Supervisor">Clinical Supervisor</option><option value="Educational Supervisor">Educational Supervisor</option><option value="Preceptor">Preceptor</option><option value="Instructor or Teacher">Instructor or Teacher</option><option value="Collaborated on Research">Collaborated on Research</option><option value="Clinical Educator">Clinical Educator</option><option value="Patient Advocate">Patient Advocate</option><option value="Coordinated Care Together">Coordinated Care Together</option><option value="Advisory Role">Advisory Role</option><option value="Worked Together on Committees">Worked Together on Committees</option><option value="Consultant Relationship">Consultant Relationship</option><option value="Professional Mentor">Professional Mentor</option><option value="Team Leader">Team Leader</option><option value="Subordinate in a Leadership Role">Subordinate in a Leadership Role</option><option value="Provided Professional Development Support">Provided Professional Development Support</option><option value="Oversaw my Certification Process">Oversaw my Certification Process</option><option value="External Collaborator">External Collaborator</option><option value="Other">Other</option></select><span id="reqreferencerel-' + referee_div_count + '" class="reqError text-danger valley"></span></div></div><div class="col-md-6"><div class="form-group level-drp"><label class="form-label" for="input-1">You worked together at:</label><input class="form-control worked_together worked_together-' + referee_div_count + '" type="text" name="worked_together[]"><span id="reqworked_together-' + referee_div_count + '" class="reqError text-danger valley"></span></div></div></div><div class="row"><div class="col-md-12"><div class="form-group level-drp"><label class="form-label" for="input-1">What was your position when you worked with this referee?</label><ul id="position_held_fieldr-' + referee_div_count + '" style="display:none;">'+ref_text+'</ul><select class="js-example-basic-multiple'+referee_div_count+' addAll_removeAll_btn pos_heldr pos_heldr_' + referee_div_count + '" data-list-id="position_held_fieldr-' + referee_div_count + '" name="position_with_referee[' + referee_div_count + ']" id="position_held_fieldr-' + referee_div_count + '" onchange="getPostionsr(\''+ap+'\',\'' + referee_div_count + '\')" multiple></select></div><div class="show_positionsr-' + referee_div_count + '"></div></div></div><div class="row"><div class="col-md-6"><div class="form-group level-drp"><label class="form-label" for="input-1">Start Date</label><input class="form-control start_date start_date-' + referee_div_count + '" type="date" name="start_date[]" onchange="startDate(' + referee_div_count + ')" onkeydown="return false"><span id="reqrefereesdate-' + referee_div_count + '" class="reqError text-danger valley"></span><div class="declaration_box"><input type="hidden" name="still_working1[]" class="still_working1-'+referee_div_count+'" value="0" /><input class="still_working still_working-' + referee_div_count + '" type="checkbox" name="still_working[]" onclick="stillWorking(' + referee_div_count + ')">I am still working with this referee<span id="reqstillworking-' + referee_div_count + '" class="reqError text-danger valley"></span></div></div></div><div class="col-md-6"><div class="form-group level-drp working-' + referee_div_count + '"><label class="form-label" for="input-1">End Date</label><input class="form-control end_date end_date-' + referee_div_count + '" type="date" name="end_date[]" onkeydown="return false"><span id="reqrefereeedate-' + referee_div_count + '" class="reqError text-danger valley"></span></div></div><div class="row"><div class="col-md-6"><div class="add_new_certification_div mb-3 mt-3"><a style="cursor: pointer;" class="deleteReferee">- Delete Referee</a></div></div></div></div>');
+                  $(".reference_form").append('<div class="referee_data referee_data-' + referee_div_count + '"><h6 class="mt-0 color-brand-1 mb-20 referee_no">REFEREE ' + referee_div_count + '</h6><div class="row"><div class="col-md-6"><div class="form-group level-drp"><label class="form-label" for="input-1">First name</label><input type="hidden" name="referee_no[]" value="0"><input class="form-control first_name first_name-' + referee_div_count + '" type="text" name="first_name[]"><span id="reqfname-' + referee_div_count + '" class="reqError text-danger valley"></span></div></div><div class="col-md-6"><div class="form-group level-drp"><label class="form-label" for="input-1">Last name</label><input class="form-control last_name last_name-' + referee_div_count + '" type="text" name="last_name[]"><span id="reqlname-' + referee_div_count + '" class="reqError text-danger valley"></span></div></div></div><div class="row"><div class="col-md-6"><div class="form-group level-drp"><label class="form-label" for="input-1">Email</label><input class="form-control reference_email reference_email-' + referee_div_count + '" type="text" name="email[]"><span id="reqemail-' + referee_div_count + '" class="reqError text-danger valley"></span></div></div><div class="col-md-6"><div class="form-group level-drp"><label class="form-label" for="input-1">Phone number</label><input class="form-control phone_no phone_no-' + referee_div_count + '" type="text" name="phone_no[]"><span id="reqphoneno-' + referee_div_count + '" class="reqError text-danger valley"></span></div></div></div><div class="row"><div class="col-md-6"><div class="form-group level-drp"><label class="form-label" for="input-1">Referee relationship to you</label><select class="form-input reference_relationship reference_relationship-' + referee_div_count + '" name="reference_relationship[]"><option value="" data-select2-id="9">select</option><option value="Worked in Same Group">Worked in Same Group</option><option value="Referee Managed Me">Referee Managed Me</option><option value="I Managed Referee">I Managed Referee</option><option value="Worked Together on a Project">Worked Together on a Project</option><option value="Worked Together in Different Departments">Worked Together in Different Departments</option><option value="Colleague">Colleague</option><option value="Peer Mentor">Peer Mentor</option><option value="Clinical Supervisor">Clinical Supervisor</option><option value="Educational Supervisor">Educational Supervisor</option><option value="Preceptor">Preceptor</option><option value="Instructor or Teacher">Instructor or Teacher</option><option value="Collaborated on Research">Collaborated on Research</option><option value="Clinical Educator">Clinical Educator</option><option value="Patient Advocate">Patient Advocate</option><option value="Coordinated Care Together">Coordinated Care Together</option><option value="Advisory Role">Advisory Role</option><option value="Worked Together on Committees">Worked Together on Committees</option><option value="Consultant Relationship">Consultant Relationship</option><option value="Professional Mentor">Professional Mentor</option><option value="Team Leader">Team Leader</option><option value="Subordinate in a Leadership Role">Subordinate in a Leadership Role</option><option value="Provided Professional Development Support">Provided Professional Development Support</option><option value="Oversaw my Certification Process">Oversaw my Certification Process</option><option value="External Collaborator">External Collaborator</option><option value="Other">Other</option></select><span id="reqreferencerel-' + referee_div_count + '" class="reqError text-danger valley"></span></div></div><div class="col-md-6"><div class="form-group level-drp"><label class="form-label" for="input-1">You worked together at:</label><input class="form-control worked_together worked_together-' + referee_div_count + '" type="text" name="worked_together[]"><span id="reqworked_together-' + referee_div_count + '" class="reqError text-danger valley"></span></div></div></div><div class="row"><div class="col-md-12"><div class="form-group level-drp"><label class="form-label" for="input-1">What was your position when you worked with this referee?</label><ul id="position_held_fieldr-' + referee_div_count + '" style="display:none;">'+ref_text+'</ul><select class="js-example-basic-multiple'+referee_div_count+' addAll_removeAll_btn pos_heldr pos_heldr_' + referee_div_count + '" data-list-id="position_held_fieldr-' + referee_div_count + '" name="position_with_referee[' + referee_div_count + ']" id="position_held_fieldr-' + referee_div_count + '" onchange="getPostionsr(\''+ap+'\',\'' + referee_div_count + '\')" multiple></select></div><div class="show_positionsr-' + referee_div_count + '"></div></div></div><div class="row"><div class="col-md-6"><div class="form-group level-drp"><label class="form-label" for="input-1">Start Date</label><input class="form-control start_date start_date-' + referee_div_count + '" type="date" name="start_date[]" onchange="startDate(' + referee_div_count + ')" onkeydown="return false"><span id="reqrefereesdate-' + referee_div_count + '" class="reqError text-danger valley"></span><div class="declaration_box"><input type="hidden" name="still_working1[]" class="still_working1-'+referee_div_count+'" value="0" /><input class="still_working still_working-' + referee_div_count + '" type="checkbox" name="still_working[]" onclick="stillWorking(' + referee_div_count + ')">I am still working with this referee<span id="reqstillworking-' + referee_div_count + '" class="reqError text-danger valley"></span></div></div></div><div class="col-md-6"><div class="form-group level-drp working-' + referee_div_count + '"><label class="form-label" for="input-1">End Date</label><input class="form-control end_date end_date-' + referee_div_count + '" type="date" name="end_date[]" onkeydown="return false"><span id="reqrefereeedate-' + referee_div_count + '" class="reqError text-danger valley"></span></div></div><div class="row"><div class="col-md-6"><div class="add_new_certification_div mb-3 mt-3"><a style="cursor: pointer;" class="deleteReferee">- Delete Referee</a></div></div></div></div>');
                   selectTwoFunction(referee_div_count);
                 }
               </script>
@@ -6762,14 +6764,15 @@ if (!empty($interviewReferenceData)) {
 
   function getNurseTypeExperience(level,k,x){
     // alert();
-
+    
     if(level == "main"){
+      
       var selectedValues = $('.js-example-basic-multiple[data-list-id="type-of-nurse-experience-'+x+"-"+k+'"]').val();
     }else{
       var selectedValues = $('.js-example-basic-multiple'+k+'[data-list-id="type-of-nurse-experience-'+x+"-"+k+'"]').val();
     }
     
-    console.log("selectedValues",x+"-"+k);
+    console.log("selectedValues",selectedValues);
 
     $(".showNurseTypeExperience-"+x+"-"+k+" .subnurse_list").each(function(i,val){
         var val1 = $(val).val();
@@ -6805,7 +6808,7 @@ if (!empty($interviewReferenceData)) {
                             <label class="form-label subnurse_label subnurse_label-'+data1.main_nurse_id+'" for="input-1">'+data1.main_nurse_name+'</label>\
                             <input type="hidden" name="subnurse_list" class="subnurse_list subnurse_list-'+data1.main_nurse_id+'" value="'+data1.main_nurse_id+'">\
                             <ul id="type-of-nurse-experience-'+data1.main_nurse_id+"-"+x+'" style="display:none;">'+nurse_text+'</ul>\
-                            <select class="js-example-basic-multiple'+data1.main_nurse_id+' subnurse_valid-'+data1.main_nurse_id+' addAll_removeAll_btn" data-list-id="type-of-nurse-experience-'+data1.main_nurse_id+"-"+x+'" name="nurseType[type_'+data1.main_nurse_id+'][]" onchange="getNurseTypeExperience(\''+sub+'\',\''+data1.main_nurse_id+'\',\''+x+'\')" multiple="multiple"></select>\
+                            <select class="js-example-basic-multiple'+data1.main_nurse_id+' subnurse_valid-'+data1.main_nurse_id+' addAll_removeAll_btn" data-list-id="type-of-nurse-experience-'+data1.main_nurse_id+"-"+x+'" name="nurseType['+x+'][type_'+data1.main_nurse_id+'][]" onchange="getNurseTypeExperience(\''+sub+'\',\''+data1.main_nurse_id+'\',\''+x+'\')" multiple="multiple"></select>\
                             <span id="reqsubnursevalid-'+data1.main_nurse_id+'" class="reqError text-danger valley"></span>\
                             </div>\
                             <div class="subnurse_level-'+data1.main_nurse_id+'"></div>\
@@ -6948,7 +6951,7 @@ if (!empty($interviewReferenceData)) {
 
    function getSecialitiesExperience(level,k,x){
       // alert();
-
+      console.log("specialties_type_experience","specialties_type_experience-"+x+"-"+k);
       if(level == "main"){
         var selectedValues = $('.js-example-basic-multiple[data-list-id="specialties_type_experience-'+x+"-"+k+'"]').val();
       }else{
@@ -6990,8 +6993,8 @@ if (!empty($interviewReferenceData)) {
                               <div class="subspec_div subspec_div-'+data1.main_speciality_id+' form-group level-drp">\
                               <label class="form-label subspec_label subspec_label-'+data1.main_speciality_id+'" for="input-1">'+data1.main_speciality_name+'</label>\
                               <input type="hidden" name="subspec_list" class="subspec_list subspec_list-'+data1.main_speciality_id+'" value="'+data1.main_speciality_id+'">\
-                              <ul id="speciality_preferences-'+data1.main_speciality_id+'" style="display:none;">'+speciality_text+'</ul>\
-                              <select class="js-example-basic-multiple'+data1.main_speciality_id+' subspec_valid-'+data1.main_speciality_id+' addAll_removeAll_btn" data-list-id="speciality_preferences-'+data1.main_speciality_id+'" name="specialties[type_'+data1.main_speciality_id+'][]" onchange="getSecialitiesExperience(\''+sub+'\',\''+data1.main_speciality_id+'\',\''+x+'\')" multiple="multiple"></select>\
+                              <ul id="specialties_type_experience-'+x+"-"+data1.main_speciality_id+'" style="display:none;">'+speciality_text+'</ul>\
+                              <select class="js-example-basic-multiple'+data1.main_speciality_id+' subspec_valid-'+data1.main_speciality_id+' addAll_removeAll_btn" data-list-id="specialties_type_experience-'+x+"-"+data1.main_speciality_id+'" name="specialties_experience['+x+'][type_'+data1.main_speciality_id+'][]" onchange="getSecialitiesExperience(\''+sub+'\',\''+data1.main_speciality_id+'\',\''+x+'\')" multiple="multiple"></select>\
                               <span id="reqsubspecvalid-'+data1.main_speciality_id+'" class="reqError text-danger valley"></span>\
                               </div>\
                               <div class="subspec_level-'+data1.main_speciality_id+'"></div>\
@@ -7447,52 +7450,52 @@ if (!empty($interviewReferenceData)) {
 
   
 
-  $('.js-example-basic-multiple[data-list-id="specialties_experience"]').on('change', function() {
-    let selectedValues = $(this).val();
-    var speciality_len = $("#specialties_experience li").length;
-    ////console.log("speciality_len", speciality_len);
+  // $('.js-example-basic-multiple[data-list-id="specialties_experience"]').on('change', function() {
+  //   let selectedValues = $(this).val();
+  //   var speciality_len = $("#specialties_experience li").length;
+  //   ////console.log("speciality_len", speciality_len);
 
-    //alert($('.js-example-basic-multiple').find(':selected').data('custom-attribute'));
-    ////console.log("selectedValues", selectedValues);
-    //$('.result--show .form-group').addClass('d-none');
+  //   //alert($('.js-example-basic-multiple').find(':selected').data('custom-attribute'));
+  //   ////console.log("selectedValues", selectedValues);
+  //   //$('.result--show .form-group').addClass('d-none');
 
-    for (var k = 1; k <= speciality_len; k++) {
-      var speciality_result_val = $(".speciality_result_experience-" + k).val();
-      //alert(speciality_result_val);
-      if (selectedValues.includes(speciality_result_val)) {
+  //   for (var k = 1; k <= speciality_len; k++) {
+  //     var speciality_result_val = $(".speciality_result_experience-" + k).val();
+  //     //alert(speciality_result_val);
+  //     if (selectedValues.includes(speciality_result_val)) {
 
-        $('#specility_level_experience-' + k).removeClass('d-none');
-        //$(".sub_speciality_value").val(k);
-        ////console.log('1');
-      } else {
-        ////console.log('2');
-        $('#specility_level_experience-' + k).addClass('d-none');
-        $('.js-example-basic-multiple[data-list-id="speciality_entry_experience-' + k + '"]').select2().val(null).trigger('change');
-      }
-    }
+  //       $('#specility_level_experience-' + k).removeClass('d-none');
+  //       //$(".sub_speciality_value").val(k);
+  //       ////console.log('1');
+  //     } else {
+  //       ////console.log('2');
+  //       $('#specility_level_experience-' + k).addClass('d-none');
+  //       $('.js-example-basic-multiple[data-list-id="speciality_entry_experience-' + k + '"]').select2().val(null).trigger('change');
+  //     }
+  //   }
 
-    if (selectedValues.includes("1") == false) {
+  //   if (selectedValues.includes("1") == false) {
 
-      $('.surgical_row_experience').addClass('d-none');
-      $('.surgical_row_data_experience').addClass('d-none');
-      $('.js-example-basic-multiple[data-list-id="surgical_row_box_experience"]').select2().val(null).trigger('change');
-    }
-    if (selectedValues.includes("2") == false) {
+  //     $('.surgical_row_experience').addClass('d-none');
+  //     $('.surgical_row_data_experience').addClass('d-none');
+  //     $('.js-example-basic-multiple[data-list-id="surgical_row_box_experience"]').select2().val(null).trigger('change');
+  //   }
+  //   if (selectedValues.includes("2") == false) {
 
-      $('.surgicalobs_row_experience').addClass('d-none');
-      $('.js-example-basic-multiple[data-list-id="surgicalobs_row_data_experience"]').select2().val(null).trigger('change');
-    }
+  //     $('.surgicalobs_row_experience').addClass('d-none');
+  //     $('.js-example-basic-multiple[data-list-id="surgicalobs_row_data_experience"]').select2().val(null).trigger('change');
+  //   }
 
-    if (selectedValues.includes("3") == false) {
-      ////console.log('5');
-      $('.surgicalpad_row_data_experience').addClass('d-none');
-      $('.surgical_rowp_data_experience').addClass('d-none');
-      $('.neonatal_row_experience').addClass('d-none');
-      //$('.js-example-basic-multiple[data-list-id="surgicalobs_row_data"]').select2().val(null).trigger('change');
-    }
+  //   if (selectedValues.includes("3") == false) {
+  //     ////console.log('5');
+  //     $('.surgicalpad_row_data_experience').addClass('d-none');
+  //     $('.surgical_rowp_data_experience').addClass('d-none');
+  //     $('.neonatal_row_experience').addClass('d-none');
+  //     //$('.js-example-basic-multiple[data-list-id="surgicalobs_row_data"]').select2().val(null).trigger('change');
+  //   }
 
 
-  });
+  // });
 
   function getAdvancedData(i){
       $('.js-example-basic-multiple[data-list-id="nursing_entry_experience-'+i+'3"]').on('change', function() {

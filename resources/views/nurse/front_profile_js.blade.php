@@ -1428,7 +1428,7 @@
                     ?>
                     @endforeach
                     </ul>
-                    <select class="js-example-basic-multiple${previous_employeers_head} addAll_removeAll_btn nurse_type_exp nurse_type_exp_${previous_employeers_head}" data-list-id="type-of-nurse-experience-${previous_employeers_head}-0" name="nurseType[${previous_employeers_head}][]" id="nurse_type_experience" multiple="multiple" onchange="getNurseTypeExperience('main',0,${previous_employeers_head})" index_id="${previous_employeers_head}"></select>
+                    <select class="js-example-basic-multiple${previous_employeers_head} addAll_removeAll_btn nurse_type_exp nurse_type_exp_${previous_employeers_head}" data-list-id="type-of-nurse-experience-${previous_employeers_head}-0" name="nurseType[${previous_employeers_head}][type_0][]" id="nurse_type_experience" multiple="multiple" onchange="getNurseTypeExperience('main',0,${previous_employeers_head})" index_id="${previous_employeers_head}"></select>
                     <span id="reqnurseTypeexpId-${previous_employeers_head}" class="reqError text-danger valley"></span>
                 </div>
                 <div class="showNurseTypeExperience-${previous_employeers_head}-0"></div>
@@ -1495,7 +1495,7 @@
                             ?>
                             @endforeach
                         </ul>
-                        <select class="js-example-basic-multiple${previous_employeers_head} addAll_removeAll_btn spec_exp spec_exp_${previous_employeers_head}" data-list-id="specialties_experience-${previous_employeers_head}-0" name="specialties_experience[${previous_employeers_head}][]" onchange="getSecialitiesExperience('main',0,${previous_employeers_head})" multiple="multiple"></select>
+                        <select class="js-example-basic-multiple${previous_employeers_head} addAll_removeAll_btn spec_exp spec_exp_${previous_employeers_head}" data-list-id="specialties_experience-${previous_employeers_head}-0" name="specialties_experience[${previous_employeers_head}][type_0][]" onchange="getSecialitiesExperience('main',0,${previous_employeers_head})" multiple="multiple"></select>
                         <span id="reqspecialtiesexp-${previous_employeers_head}" class="reqError text-danger valley"></span>
                     </div>
                     
