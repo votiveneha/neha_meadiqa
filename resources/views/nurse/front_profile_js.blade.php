@@ -1416,7 +1416,7 @@
                     <label class="form-label" for="input-1">Type of Nurse?</label>
                     <input type="hidden" name="user_id" class="user_id" value="{{ Auth::guard('nurse_middle')->user()->id }}">
             
-                    <ul id="type-of-nurse-experience-${previous_employeers_head}" style="display:none;">
+                    <ul id="type-of-nurse-experience-${previous_employeers_head}-0" style="display:none;">
                     @php $specialty = specialty();$spcl=$specialty[0]->id;@endphp
                     <?php
                     $j = 1;

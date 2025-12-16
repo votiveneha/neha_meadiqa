@@ -2035,7 +2035,6 @@ public function ResetPassword(Request $request)
         
         $facility_workplace_name = $request->facility_workplace_name;
         $nurseTypes = $request->input('nurseType', []);
-        
         $nursingType1 = $request->input('nursing_type_1', []);
         $nursingType2 = $request->input('nursing_type_2', []);
         $nursingType3 = $request->input('nursing_type_3', []);
