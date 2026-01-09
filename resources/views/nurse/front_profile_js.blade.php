@@ -1428,10 +1428,11 @@
                     ?>
                     @endforeach
                     </ul>
-                    <select class="js-example-basic-multiple${previous_employeers_head} addAll_removeAll_btn nurse_type_exp nurse_type_exp_${previous_employeers_head}" data-list-id="type-of-nurse-experience-${previous_employeers_head}-0" name="nurseType[${previous_employeers_head}][type_0][]" id="nurse_type_experience" multiple="multiple" onchange="getNurseTypeExperience('main',0,${previous_employeers_head})" index_id="${previous_employeers_head}"></select>
+                    <select class="js-example-basic-multiple${previous_employeers_head} addAll_removeAll_btn nurse_type_exp nurse_type_exp_${previous_employeers_head}" data-list-id="type-of-nurse-experience-${previous_employeers_head}-0" name="nurseType[${previous_employeers_head}][type_0][]" id="nurse_type_experience" multiple="multiple" onchange="getNurseTypeExperience('add',0,${previous_employeers_head},'add')" index_id="${previous_employeers_head}"></select>
                     <span id="reqnurseTypeexpId-${previous_employeers_head}" class="reqError text-danger valley"></span>
                 </div>
                 <div class="showNurseTypeExperience-${previous_employeers_head}-0"></div>
+                
                 <div class="result--show result_show_nurse" style="display:none;">
                     <div class="container p-0">
                         <div class="row g-2">
@@ -1483,7 +1484,7 @@
                     <div class="form-group drp--clr">
                         <input type="hidden" name="sub_speciality_value" class="sub_speciality_value" value="">
                         <label class="form-label" for="input-1">Specialties</label>
-                        <ul id="specialties_experience-${previous_employeers_head}-0" style="display:none;">
+                        <ul id="specialties_type_experience-${previous_employeers_head}-0" style="display:none;">
                             @php $JobSpecialties = JobSpecialties(); @endphp
                             <?php
                             $k = 1;
@@ -1495,7 +1496,7 @@
                             ?>
                             @endforeach
                         </ul>
-                        <select class="js-example-basic-multiple${previous_employeers_head} addAll_removeAll_btn spec_exp spec_exp_${previous_employeers_head}" data-list-id="specialties_experience-${previous_employeers_head}-0" name="specialties_experience[${previous_employeers_head}][type_0][]" onchange="getSecialitiesExperience('main',0,${previous_employeers_head})" multiple="multiple"></select>
+                        <select class="js-example-basic-multiple${previous_employeers_head} addAll_removeAll_btn spec_exp spec_exp_${previous_employeers_head}" data-list-id="specialties_type_experience-${previous_employeers_head}-0" name="specialties_experience[${previous_employeers_head}][type_0][]" onchange="getSecialitiesExperience('add',0,${previous_employeers_head})" multiple="multiple"></select>
                         <span id="reqspecialtiesexp-${previous_employeers_head}" class="reqError text-danger valley"></span>
                     </div>
                     
@@ -2802,12 +2803,54 @@
                 if ($(".type_nurse_ep-" + l).val() != "") {
                     // Initialize select2
                     var nurse_type1 = JSON.parse($(".type_nurse_ep-" + l).val());
-                    $('#nurse_type_exp-' + l).select2().val(nurse_type1).trigger('change');
+                    console.log("nurse_type1",nurse_type1);
+                    $('#nurse_type_exp-' + l+"-0").select2().val(nurse_type1).trigger('change');
                 }
             }
             l++;
         });
 
+        $(".subspec_list_experience_count").each(function() {
+            var experience_count = $(this).val();
+            console.log("experience_count",$(".speciality_exp-" + experience_count).val());
+            
+                if ($(".speciality_exp-" + experience_count).val() != "") {
+                    var spec_type = JSON.parse($(".speciality_exp-" + experience_count).val());
+                    console.log("spec_type",spec_type);
+                    $('.exp_spe_type_' + experience_count).select2().val(spec_type).trigger('change');
+                }
+           
+
+            $(".subspec_list_experiences-"+experience_count).each(function(){
+                var subspec_val = $(this).val();
+                console.log("subspec_val_experience",subspec_val);
+                if ($(".subspectype_experience-"+subspec_val+"-"+experience_count).val() != "") {
+                    var spec_type_experience = JSON.parse($(".subspectype_experience-"+subspec_val+"-"+experience_count).val());
+                    console.log("spec_type_experience",spec_type_experience);
+                    $("#specialties_type_exp-"+subspec_val+"-"+experience_count).select2().val(spec_type_experience).trigger('change');
+                }
+            });    
+        });
+
+        $(".nursetype_list_experience_count").each(function() {
+        var experience_count = $(this).val();
+        console.log("nurse_type_experience2",experience_count);
+        $(".subnurse_list_experiences-"+experience_count).each(function(){
+                var subspec_val1 = $(this).val();
+                console.log("subnursetype_experience",$(".subnursetype_experiences-"+subspec_val1+"-"+experience_count).val());
+                if ($(".subnursetype_experiences-"+subspec_val1+"-"+experience_count).val() != "") {
+                    var nurse_type_experience = JSON.parse($(".subnursetype_experiences-"+subspec_val1+"-"+experience_count).val());
+                    console.log("nurse_type_experience1",nurse_type_experience);
+                    $("#type-of-nurse-experience-"+subspec_val1+"-"+experience_count).select2().val(nurse_type_experience).trigger('change');
+                }
+            });  
+        });
+        
+        $(document).ready(function () {
+            $('.profession_summury_table tbody tr').each(function (index) {
+                $(this).find('td.sno').text(index + 1);
+            });
+        });
         var a = 1;
         var triggerCount = 0; // Initialize the counter
         $(".nurse-res-rex").each(function() {
@@ -2854,16 +2897,16 @@
         });
 
 
-        var d = 1;
-        $(".condition_set").each(function() {
-            if ($(".exp_tab-" + d).length > 0) {
-                if ($(".speciality_exp_value-" + d).val() != "") {
-                    var spec_type = JSON.parse($(".speciality_exp_value-" + d).val());
-                    $('.exp_spe_type_' + d).select2().val(spec_type).trigger('change');
-                }
-            }
-            d++;
-        });
+        // var d = 1;
+        // $(".condition_set").each(function() {
+        //     if ($(".exp_tab-" + d).length > 0) {
+        //         if ($(".speciality_exp_value-" + d).val() != "") {
+        //             var spec_type = JSON.parse($(".speciality_exp_value-" + d).val());
+        //             $('.exp_spe_type_' + d).select2().val(spec_type).trigger('change');
+        //         }
+        //     }
+        //     d++;
+        // });
 
 
         var e = 1;
@@ -3172,41 +3215,41 @@
         }
     }
 
-    // $(document).on('change', '.specialties_experience', function() {
-    //     let selectedValues = $(this).val();
-    //     let index = $(this).attr('index_value');
-    //     var speciality_len = $("#specialties_type_experience-1 li").length;
+    $(document).on('change', '.specialties_experience', function() {
+        let selectedValues = $(this).val();
+        let index = $(this).attr('index_value');
+        var speciality_len = $("#specialties_type_experience-1 li").length;
 
-    //     for (var k = 1; k <= speciality_len; k++) {
-    //         var speciality_result_val = $(".speciality_exp_result-" + k + '-' + index).val();
-    //         if (selectedValues.includes(speciality_result_val)) {
-    //             $('#specility_level_exp-' + k + '-' + index).removeClass('d-none');
-    //         } else {
-    //             $('#specility_level_exp-' + k + '-' + index).addClass('d-none');
-    //             $('.js-example-basic-multiple[data-list-id="speciality_entry_exp-' + k + '-' + index + '"]').select2().val(null).trigger('change');
-    //         }
-    //     }
+        for (var k = 1; k <= speciality_len; k++) {
+            var speciality_result_val = $(".speciality_exp_result-" + k + '-' + index).val();
+            if (selectedValues.includes(speciality_result_val)) {
+                $('#specility_level_exp-' + k + '-' + index).removeClass('d-none');
+            } else {
+                $('#specility_level_exp-' + k + '-' + index).addClass('d-none');
+                $('.js-example-basic-multiple[data-list-id="speciality_entry_exp-' + k + '-' + index + '"]').select2().val(null).trigger('change');
+            }
+        }
 
-    //     if (!selectedValues.includes("1")) {
-    //         $('.subvaluedata_' + index).addClass('d-none');
-    //         $('.surgical_row_data_experience_' + index).addClass('d-none');
-    //         $('.sur_exp_' + index).select2().val(null).trigger('change');
-    //     }
+        if (!selectedValues.includes("1")) {
+            $('.subvaluedata_' + index).addClass('d-none');
+            $('.surgical_row_data_experience_' + index).addClass('d-none');
+            $('.sur_exp_' + index).select2().val(null).trigger('change');
+        }
 
-    //     if (selectedValues.includes("2") == false) {
-    //         $('.surgicalobs_row_exp_' + index).addClass('d-none');
-    //         $('.js-example-basic-multiple[data-list-id="surgicalobs_row_data_experience_' + index + '"]').select2().val(null).trigger('change');
-    //     }
+        if (selectedValues.includes("2") == false) {
+            $('.surgicalobs_row_exp_' + index).addClass('d-none');
+            $('.js-example-basic-multiple[data-list-id="surgicalobs_row_data_experience_' + index + '"]').select2().val(null).trigger('change');
+        }
 
-    //     if (selectedValues.includes("3") == false) {
-    //         $('.surgicalpad_row_data_exp_' + index).addClass('d-none');
-    //         $('.surgical_rowp_exp_' + index).addClass('d-none');
-    //         $('.neonatal_row_exp_' + index).addClass('d-none');
-    //         $('.js-example-basic-multiple[data-list-id="surgical_rowpad_box_exp_' + index + '"]').select2().val(null).trigger('change');
-    //         $('.js-example-basic-multiple[data-list-id="surgical_operative_care_experience-' + k + '-' + index + '"]').select2().val(null).trigger('change');
-    //         //$('.js-example-basic-multiple[data-list-id="surgicalobs_row_data"]').select2().val(null).trigger('change');
-    //     }
-    // });
+        if (selectedValues.includes("3") == false) {
+            $('.surgicalpad_row_data_exp_' + index).addClass('d-none');
+            $('.surgical_rowp_exp_' + index).addClass('d-none');
+            $('.neonatal_row_exp_' + index).addClass('d-none');
+            $('.js-example-basic-multiple[data-list-id="surgical_rowpad_box_exp_' + index + '"]').select2().val(null).trigger('change');
+            $('.js-example-basic-multiple[data-list-id="surgical_operative_care_experience-' + k + '-' + index + '"]').select2().val(null).trigger('change');
+            //$('.js-example-basic-multiple[data-list-id="surgicalobs_row_data"]').select2().val(null).trigger('change');
+        }
+    });
 
     $(document).on('change', '.surgical_subtype', function() {
         let selectedValues = $(this).val(); // Get selected values
