@@ -1526,6 +1526,17 @@ public function ResetPassword(Request $request)
     //     }
     // }
 
+    public function getSpecialities(Request $request)
+    {
+        $specialities_data = PractitionerTypeModel::where("parent","0")->get();
+        
+        if(!empty($specialities_data)){
+            $data['specialities_data'] = $specialities_data;
+            $data['main_nurse_id'] = $request->main_nurse_id;
+            return json_encode($data);
+        }
+    }
+
     public function updateProfession(Request $request)
     {
         $nurse_type = json_encode($request->nurseType);
@@ -4662,6 +4673,13 @@ public function ResetPassword(Request $request)
         $data['main_nurse_id'] = $nurse_id;
         $data['main_nurse_name'] = $main_nurse_data->name;
         $data['sub_nurse_data'] = $sub_nurse_data;
+
+        $specialities_data = PractitionerTypeModel::where("parent","0")->get();
+        
+        if(!empty($specialities_data)){
+            $data['specialities_data'] = $specialities_data;
+            
+        }
 
         return json_encode($data);
     }

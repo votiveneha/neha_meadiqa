@@ -1534,7 +1534,7 @@ p.highlight-text {
                       </div>
 
                     </div>
-                    <div class="condition_set">
+                    <div class="condition_set" style="display:none">
                       <div class="form-group drp--clr">
                         <input type="hidden" name="speciality_value" class="speciality_value" value="{{ isset($specialities_type['type_0'])  && $btn_name == 'edit' ?json_encode($specialities_type['type_0']):'' }}">
                         <label class="form-label" for="input-1">Specialties</label>
@@ -1556,7 +1556,7 @@ p.highlight-text {
                       </div>
                       
                     </div>
-                    <div class="show_specialities-0">
+                    <div class="show_specialities-0" style="display:none">
                       
 
                       @php
@@ -8279,10 +8279,34 @@ if (!empty($interviewReferenceData)) {
                             <span id="reqsubnursevalid-'+data1.main_nurse_id+'" class="reqError text-danger valley"></span>\
                             </div>\
                             <div class="subnurse_level-'+data1.main_nurse_id+'"></div>\
-                            </div><div class="show_nurse-'+data1.main_nurse_id+'"></div>');
+                            </div><div class="showNurseType-'+data1.main_nurse_id+'"></div>');
+              selectTwoFunction(data1.main_nurse_id);
+                            
+            }else{
 
-                            selectTwoFunction(data1.main_nurse_id);
+              
+                  var speciality_text = "";
+                  for(var j=0;j<data1.specialities_data.length;j++){
+                    
+                    speciality_text += "<li data-value='"+data1.specialities_data[j].id+"'>"+data1.specialities_data[j].name+"</li>"; 
+                    
+                  }
+                  var sub = 'sub';  
+                  $(".showNurseType-"+k).append('\<div class="condition_set">\
+                                <div class="form-group drp--clr">\
+                                  <label class="form-label" for="input-1">Specialties</label>\
+                                  <ul id="speciality_preferences-'+data1.main_nurse_id+'-0" style="display:none;">'+speciality_text+'</ul>\
+                                  <select class="js-example-basic-multiple'+data1.main_nurse_id+'-0 addAll_removeAll_btn speciality_type_field" data-list-id="speciality_preferences-'+data1.main_nurse_id+'-0" name="specialties[type_0][]" multiple="multiple" onchange="getSecialities(\''+sub+'\',\''+data1.main_nurse_id+'\',0)"></select>\
+                                  <span id="reqspecialties" class="reqError text-danger valley"></span>\
+                                </div>\
+                              </div><div class="show_specialities-'+data1.main_nurse_id+'-0"></div>');
+                              
+                  selectTwoFunction(data1.main_nurse_id+"-"+0);
+               
+              
             }
+
+            
             
           }
         });
@@ -8755,14 +8779,14 @@ $.each(specialityTree, function (parentKey, children) {
         });
     });
 });
-  function getSecialities(level, k,ed) {
+  function getSecialities(level,nurse_id, k) {
 
     
 
     if (level === "main") {
-        var selectedValues = $('.js-example-basic-multiple[data-list-id="speciality_preferences-' + k + '"]').val() || [];
+        var selectedValues = $('.js-example-basic-multiple[data-list-id="speciality_preferences-' + nurse_id + '"]').val() || [];
     } else {
-        var selectedValues = $('.js-example-basic-multiple' + k + '[data-list-id="speciality_preferences-' + k + '"]').val() || [];
+        var selectedValues = $('.js-example-basic-multiple' + nurse_id+"-" +k+ '[data-list-id="speciality_preferences-' + nurse_id+"-"+k+ '"]').val() || [];
     }
 
     
@@ -8824,8 +8848,8 @@ $.each(specialityTree, function (parentKey, children) {
                 /* ===== HAS SUB SPECIALTIES ===== */
                 if (data1.sub_spciality_data.length > 0) {
 
-                    $(".show_specialities-" + k).append(`
-                        <div class="subspec_main_div subspec_main_div-${data1.main_speciality_id}"
+                    $(".show_specialities-"+nurse_id+"-" + k).append(`
+                        <div class="subspec_main_div subspec_main_div-${nurse_id}-${data1.main_speciality_id}"
                              data-id="${data1.main_speciality_id}"
                              data-parent="${k}">
 
@@ -8834,32 +8858,32 @@ $.each(specialityTree, function (parentKey, children) {
 
                                 <input type="hidden" class="subspec_list subspec_listProf-${k} subspec_list-${k}" value="${data1.main_speciality_id}">
 
-                                <ul id="speciality_preferences-${data1.main_speciality_id}" style="display:none;">
+                                <ul id="speciality_preferences-${nurse_id}-${data1.main_speciality_id}" style="display:none;">
                                     ${speciality_text}
                                 </ul>
 
-                                <select class="js-example-basic-multiple${data1.main_speciality_id} subspec_valid-${data1.main_speciality_id} addAll_removeAll_btn"
-                                        data-list-id="speciality_preferences-${data1.main_speciality_id}"
+                                <select class="js-example-basic-multiple${nurse_id}-${data1.main_speciality_id} subspec_valid-${data1.main_speciality_id} addAll_removeAll_btn"
+                                        data-list-id="speciality_preferences-${nurse_id}-${data1.main_speciality_id}"
                                         name="specialties[type_${data1.main_speciality_id}][]"
                                         multiple
-                                        onchange="getSecialities('sub', ${data1.main_speciality_id})">
+                                        onchange="getSecialities('sub', ${nurse_id}, ${data1.main_speciality_id})">
                                 </select>
                             </div>
                             <span id="reqsubspecvalid-${data1.main_speciality_id}" class="reqError text-danger valley"></span>
-                            <div class="show_specialities-${data1.main_speciality_id}"></div>
-                            <div class="show_specialitiesStatus-${data1.main_speciality_id}"></div>
+                            <div class="show_specialities-${nurse_id}-${data1.main_speciality_id}"></div>
+                            <div class="show_specialitiesStatus-${nurse_id}-${data1.main_speciality_id}"></div>
                             
                         </div>
                     `);
 
-                    selectTwoFunction(data1.main_speciality_id);
+                    selectTwoFunction(nurse_id+"-"+data1.main_speciality_id);
                 }
                 /* ===== LEAF NODE (STATUS) ===== */
                 else {
 
                     if ($(".subspecprofdiv-" + data1.main_speciality_id).length === 0) {
 
-                        $(".show_specialitiesStatus-" + k).append(`
+                        $(".show_specialitiesStatus-"+nurse_id+"-" + k).append(`
                             <div class="custom-select-wrapper subspecprofdiv subspecprofdiv-${data1.main_speciality_id}"
                                  data-id="${data1.main_speciality_id}"
                                  data-parent="${k}">

@@ -2681,7 +2681,7 @@
     }
 
     function selectTwoFunction(select_id){
-    
+        
         $('.addAll_removeAll_btn').on('select2:open', function() {
             var $dropdown = $(this);
             var searchBoxHtml = `

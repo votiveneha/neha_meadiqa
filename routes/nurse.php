@@ -280,6 +280,7 @@ Route::prefix('nurse')->name('nurse.')->namespace('App\Http\Controllers\nurse')-
   Route::get('getEmptypeData', 'JobsController@getEmptypeData')->name('getEmptypeData');
   Route::get('matchedJobs', 'MatchController@matchedJobs')->name('matchedJobs');
   Route::get('getSpecialityDatas', 'WorkPreferencesController@getSpecialityDatas')->name('getSpecialityDatas');
+  Route::get('getSpecialities', 'HomeController@getSpecialities')->name('getSpecialities');
   
   });
 });
