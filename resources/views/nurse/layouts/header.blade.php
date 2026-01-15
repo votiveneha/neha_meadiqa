@@ -122,8 +122,8 @@ img, iframe, video {
       }
     });
 </script>
-
-  @if (!Auth::guard('nurse_middle')->check())
+  
+  @if (!Auth::guard('nurse_middle')->check() && !Auth::guard('healthcare_facilities')->check() && !Auth::guard('agencies')->check())
   <header class="header sticky-bar top-view-desktop-add without_login">
     <div class="container">
       <div class="main-header">
@@ -470,7 +470,53 @@ img, iframe, video {
     </ul>
   </div>
 </div>
-
+  @else
+  
+  @if (Auth::guard('healthcare_facilities')->check())
+  <header class="header sticky-bar  border-bottom">
+    <div class="container">
+      <div class="main-header">
+        <div class="header-left">
+          <div class="header-logo"><a class='d-flex' href='{{ route("home_main") }}'><img alt="jobBox" src="{{ asset(env('LOGO_PATH'))}}"></a></div>
+        </div>
+        <div class="header-nav">
+          <nav class="nav-main-menu">
+            <ul class="main-menu">
+              <li>
+                <a class="{{ request()->is('healthcare-facilities/my-profile') ?'active':'' }}  hover-up " href='{{ route("medical-facilities.my-profile") }}'>Profile</a>
+              </li>
+              <li>
+                <a class="{{ request()->is('healthcare-facilities/my-profile') ?'active':'' }}  hover-up " href='{{ route("medical-facilities.logout") }}'>Logout</a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>  
+  </header>
+  @else
+  @if (Auth::guard('agencies')->check())
+  <header class="header sticky-bar  border-bottom">
+    <div class="container">
+      <div class="main-header">
+        <div class="header-left">
+          <div class="header-logo"><a class='d-flex' href='{{ route("home_main") }}'><img alt="jobBox" src="{{ asset(env('LOGO_PATH'))}}"></a></div>
+        </div>
+        <div class="header-nav">
+          <nav class="nav-main-menu">
+            <ul class="main-menu">
+              <li>
+                <a class="{{ request()->is('agencies/my-profile') ?'active':'' }}  hover-up " href='{{ route("agencies.my-profile") }}'>Profile</a>
+              </li>
+              <li>
+                <a class="{{ request()->is('agencies/my-profile') ?'active':'' }}  hover-up " href='{{ route("agencies.logout") }}'>Logout</a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>  
+  </header>
   @else
   <header class="header sticky-bar  border-bottom">
     <div class="container">
@@ -618,7 +664,8 @@ img, iframe, video {
   </div>
     </div>
   </header>
-  
+  @endif
+  @endif
   @endif
   
   <script>

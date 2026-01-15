@@ -234,6 +234,9 @@ class HomeController extends Controller
         $lot        = '#' . str_pad($orderform + 1, 4, "0", STR_PAD_LEFT);
         $randnum    = rand(1111111111, 9999999999);
 
+        //print_r($request->nurseType);die;
+        $nurse_type_arr = $request->nurseType;
+        //print_r($nurse_type_arr);die;
         $companyinsert['name']        = $request->fullname;
         $companyinsert['lastname']    = $request->lastname;
         $companyinsert['email']       = $request->email;
@@ -277,9 +280,42 @@ class HomeController extends Controller
         $companyinsert['pad_qr_scout']                   = json_encode($request->surgical_operative_carep_2);
         $companyinsert['pad_qr_scrub']                   = json_encode($request->surgical_operative_carep_3);
         $companyinsert['profession_banner_status']                   = 1;
+        $companyinsert['role']                   = "nurse";
 
         $run = User::insert($companyinsert);
         $r   = User::where('email', $request->email)->first();
+
+        $levelKeys = array_filter(array_keys($nurse_type_arr), function($key) {
+            return str_contains($key, 'type') && $key !== 'type_0';
+        });
+
+        $lastLevelKey = end($levelKeys);   // Example: "type_30"
+
+        $lastLevelId = str_replace('type_', '', $lastLevelKey); // 30
+
+        $lastLevelValues = $nurse_type_arr[$lastLevelKey] ?? [];
+
+        foreach($nurse_type_arr as $key=>$nurse_type){
+            if (str_contains($key, 'type') && $key !== 'type_0') {
+                foreach($nurse_type as $ntype){
+                    $specialities = $nurse_type_arr[$ntype];
+                    $lastKey = array_key_last($specialities); // type_98
+                    $specialities_data = $specialities[$lastKey];
+                    //print_r($specialities[$lastKey]);
+                    foreach($specialities_data as $spec){
+                        
+                            
+                                $post = new Profession;
+                                $post->user_id = $r->id;
+                                $post->nurse_data = $ntype;
+                                $post->specialties = $spec;
+                                $run = $post->save();
+                            
+                        
+                    }
+                }
+            }
+        }
 
         // $professioninsert['nurse_data']                     = json_encode($request->nurseType);
         // $professioninsert['specialties']                   = json_encode($request->specialties);
@@ -1610,6 +1646,7 @@ public function ResetPassword(Request $request)
                                 foreach($spec as $spe){
                                     $spec_arr_id = "type_".$spe;
                                     $post = new Profession;
+                                    
                                     $post->user_id = $user_id;
                                     $post->nurse_data = $ntype;
                                     $post->specialties = $spe;

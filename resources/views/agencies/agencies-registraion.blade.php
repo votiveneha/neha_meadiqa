@@ -1,5 +1,11 @@
 @extends('nurse.layouts.layout')
 @section('css')
+<style>
+  .reqError{
+    color:red !important;
+  }
+</style>
+@endsection
 
 @section('content')
 
@@ -10,9 +16,9 @@
           
 		 
 
-		  <form id="multi-step-form">
+		  <form id="agencies-registration-form" method="post" onsubmit="return dosignup()">
 
-		  
+		  @csrf
 		     <div class="row align-items-center">
             
               <!-- <div class="col-lg-6 col-md-6 col-sm-12 mx-auto text-center">
@@ -63,13 +69,15 @@
                   <div class="col-md-6">
                     <div class="form-group">
                   <label class="form-label" for="input-1">Agency Name *</label>
-                  <input class="form-control" id="input-1" type="text" required="" name="fullname" placeholder="Steven Job">
+                  <input class="form-control" id="fullname" type="text" name="fullname" placeholder="Steven Job">
+                  <span id="reqfullname" class="reqError valley"></span>
                 </div>
                   </div>
                   <div class="col-md-6">
                      <div class="form-group">
                   <label class="form-label" for="input-2">Agency Email address *</label>
-                  <input class="form-control" id="input-2" type="email" required="" name="emailaddress" placeholder="stevenjob@gmail.com">
+                  <input class="form-control" id="emailaddress" type="email" name="emailaddress" placeholder="stevenjob@gmail.com">
+                  <span id="reqemailaddress" class="reqError valley"></span>
                 </div>
                   </div>
                   <!-- <div class="col-md-6">
@@ -97,13 +105,15 @@
                   <div class="col-md-6">
                     <div class="form-group">
                   <label class="form-label" for="input-4">Password *</label>
-                  <input class="form-control" id="input-4" type="password" required="" name="password" placeholder="********">
+                  <input class="form-control" id="password" type="password" name="password" placeholder="********">
+                  <span id="reqpassword" class="reqError valley"></span>
                 </div>
                   </div>
                   <div class="col-md-6">
                     <div class="form-group">
                   <label class="form-label" for="input-4">Confirm Password *</label>
-                  <input class="form-control" id="input-4" type="password" required="" name="password" placeholder="********">
+                  <input class="form-control" id="confirm_password" type="password" name="password" placeholder="********">
+                  <span id="reqconfirm_password" class="reqError valley"></span>
                 </div>
                   </div>
                 </div>
@@ -120,10 +130,11 @@
                     <input type="checkbox"><span class="text-small">Agree our terms and policy</span><span class="checkmark"></span>
                   </label><a class='text-muted' href='#'>Lean more</a>
                 </div>
-                 <div class="d-flex align-items-center justify-content-between">
-                
-              <a type="button" class="btn btn-default w-100" href="#">Submit &amp; Register</a>
-              </div>
+                 <button class="btn btn-default px-5 py-8  rounded-2 mb-0 submit-btn-120" style="width:100%" id="agencies_registration_btn" type="submit"><span class="resetpassword">Submit &amp; Register</span>
+                    <div class="spinner-border submit-btn-1" role="status" style="display:none;">
+                      <span class="sr-only">Loading...</span>
+                    </div>
+                  </button>
               </div>
 
 
@@ -153,4 +164,87 @@
 
 @endsection
 @section('js')
+
+<script>
+  function dosignup(){
+    var hospital_name = $("#fullname").val();
+    var emailaddress = $("#emailaddress").val();
+    
+    var password = $("#password").val();
+    var confirm_password = $("#confirm_password").val();
+
+    var isValid = true;
+    if(hospital_name == ""){
+      $("#reqfullname").text("Please enter the Hospital Name");
+      isValid = false;
+    }
+
+    if(emailaddress == ""){
+      $("#reqemailaddress").text("Please enter the Email address");
+      isValid = false;
+    }
+
+    
+
+    if(password == ""){
+      $("#reqpassword").text("Please enter the Password");
+      isValid = false;
+    }
+
+    if(confirm_password == ""){
+      $("#reqconfirm_password").text("Please enter the Confirm Password");
+      isValid = false;
+    }
+
+    if(password != confirm_password){
+      $("#reqconfirm_password").text("The password and confirm password do not match.");
+      isValid = false;
+    }
+
+    if (isValid == true) {
+        $.ajax({
+        url: "{{ route('agencies.agenciesRegistration') }}",
+        type: "POST",
+        cache: false,
+        contentType: false,
+        processData: false,
+        data: new FormData($('#agencies-registration-form')[0]),
+        dataType: 'json',
+        beforeSend: function() {
+          $('#agencies_registration_btn').prop('disabled', true);
+          $('#agencies_registration_btn').text('Process....');
+        },
+        success: function(res) {
+          console.log("res",res);
+          if (res.status == '1') {
+            Swal.fire({
+              icon: 'success',
+              title: 'Success',
+              text: 'Congratulations! Your registration was successful. Please check your email; we have sent you a verification email to your registered address!',
+            }).then(function() {
+              window.location.href = "{{ route('agencies.email-verification-pending') }}";
+            });
+          } else {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: res.message,
+            })
+          }
+        },
+        error: function(errorss) {
+          $('#agencies_registration_btn').prop('disabled', false);
+          $('#agencies_registration_btn').text('Save Changes');
+          console.log("errorss", errorss);
+          for (var err in errorss.responseJSON.errors) {
+            $("#agencies_registration_btn").find("[name='" + err + "']").after("<div class='text-danger'>" + errorss.responseJSON.errors[err] + "</div>");
+          }
+        }
+      
+        });
+      }
+
+    return false;
+  }
+</script>
 @endsection

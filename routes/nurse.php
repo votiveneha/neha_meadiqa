@@ -39,20 +39,33 @@ Route::post('/getsurgicalSpeciality', 'App\Http\Controllers\HomeController@getsu
 Route::post('/getsurgicalSubSpeciality', 'App\Http\Controllers\HomeController@getsurgicalSubSpeciality')->name('getsurgicalSubSpeciality');
 
 Route::prefix('healthcare-facilities')->name('medical-facilities.')->namespace('App\Http\Controllers\medical_facilities')->group(function () {
+  
   Route::get('/', 'HomeController@index_main')->name('medical_facilities_home_main');
   Route::get('/medical-facilities-registraion', 'HomeController@registraion')->name('medical-facilities-registraion');
+  Route::get('/email-verification-pending', 'HomeController@emailVerificationPending')->name('email-verification-pending');
+  Route::get('/profile-under-reviewed', 'HomeController@profileUnderReviewed')->name('profile-under-reviewed');
   Route::post('/healthcareRegistration', 'HomeController@healthcareRegistration')->name('healthcareRegistration');
   Route::get('/login', 'HomeController@login')->name('login');
   Route::post('/userloginAction', 'HomeController@userloginAction')->name('userloginAction');
-  Route::middleware('nurse_middle')->group(function () {});
+  
+  Route::get('/logout', 'HomeController@logout')->name('logout');
+  Route::middleware('healthcare')->group(function () {
+    Route::get('/my-profile', 'HomeController@manage_profile')->name('my-profile');
+  });
 });
 
 Route::prefix('agencies')->name('agencies.')->namespace('App\Http\Controllers\agencies')->group(function () {
   Route::get('/', 'HomeController@index_main')->name('agencies_home_main');
   Route::get('/agencies-registraion', 'HomeController@registraion')->name('agencies-registraion');
   Route::get('/login', 'HomeController@login')->name('login');
-
-  Route::middleware('nurse_middle')->group(function () {});
+  Route::post('/agenciesRegistration', 'HomeController@agenciesRegistration')->name('agenciesRegistration');
+  Route::get('/email-verification-pending', 'HomeController@emailVerificationPending')->name('email-verification-pending');
+  Route::get('/profile-under-reviewed', 'HomeController@profileUnderReviewed')->name('profile-under-reviewed');
+  Route::post('/userloginAction', 'HomeController@userloginAction')->name('userloginAction');
+  Route::get('/logout', 'HomeController@logout')->name('logout');
+  Route::middleware('agencies')->group(function () {
+    Route::get('/my-profile', 'HomeController@manage_profile')->name('my-profile');
+  });
 });
 
 Route::prefix('individuals')->name('individuals.')->namespace('App\Http\Controllers\individuals')->group(function () {
