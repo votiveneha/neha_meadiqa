@@ -160,17 +160,17 @@ class HomeController extends Controller
             foreach (json_decode($user_data->nurse_data) as $key => $values) {
                 if ($key !== 'type_0') {
                     
-                    $nurse_data = array_merge($nurse_data, $values);
+                    //$nurse_data = array_merge($nurse_data, $values);
                 }
             }
         }
         if($user_data->specialties != NULL){
-            foreach (json_decode($user_data->specialties) as $key => $values) {
-                if ($key !== 'type_0' && $key !== 'speciality_status') {
+            // foreach (json_decode($user_data->specialties) as $key => $values) {
+            //     if ($key !== 'type_0' && $key !== 'speciality_status') {
                     
-                    $specialities_data = array_merge($specialities_data, $values);
-                }
-            }
+            //         $specialities_data = array_merge($specialities_data, $values);
+            //     }
+            // }
         }
         
         $specialities_type = (array)json_decode($user_data->specialties);
@@ -1624,11 +1624,25 @@ public function ResetPassword(Request $request)
             $temporary_status1 = "";
         }
 
+        
+
         $professionData = Profession::where("user_id",$user_id)->get();
 
         if($btn_name != 'edit' || !empty($professionData)){
 
             //$user_stage = update_user_stage($request->user_id,"Profession");
+
+            $levelKeys = array_filter(array_keys($nurse_type_arr), function($key) {
+                return str_contains($key, 'type') && $key !== 'type_0';
+            });
+
+            print_r($levelKeys);die;
+
+            $lastLevelKey = end($levelKeys);   // Example: "type_30"
+
+            $lastLevelId = str_replace('type_', '', $lastLevelKey); // 30
+
+            $lastLevelValues = $nurse_type_arr[$lastLevelKey] ?? [];
 
             //print_r($nurse_type_arr);
             foreach($nurse_type_arr as $key=>$nurse_type){
@@ -1639,8 +1653,10 @@ public function ResetPassword(Request $request)
                     foreach($nurse_type as $ntype){
                         //echo $ntype;
                         $specialities = $nurse_type_arr[$ntype];
+                        $lastKey = array_key_last($specialities); // type_98
+                        $specialities_data = $specialities[$lastKey];
                         //print_r($specialities);
-                        foreach($specialities as $key1=>$spec){
+                        foreach($specialities_data as $spec){
                             //print_r($spec);
                             if (str_contains($key1, 'type') && $key1 !== 'type_0') {
                                 foreach($spec as $spe){
@@ -1670,7 +1686,7 @@ public function ResetPassword(Request $request)
                         
                     }
                 }
-            }
+            }die;
 
            
         }else{

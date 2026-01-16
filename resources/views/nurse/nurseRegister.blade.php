@@ -867,7 +867,7 @@ $(document).ready(function() {
         var val1 = $(val).val();
         console.log("val",val1);
         if(selectedValues.includes(val1) == false){
-          $(".subnurse_main_div-"+val1).remove();
+          $(".showNurseType-" + k).find(".subnurse_main_div-" + val1).remove();
             
         }
     });
@@ -880,7 +880,10 @@ $(document).ready(function() {
         if(selectedValues.includes(val1) == false){
 
           
-          $(".nurse_specialities-"+val1).remove();
+          $(".showNurseSpeciality-" + k)
+   .find(".nurse_specialities-" + val1)
+   .remove();
+
           
         }
     });
@@ -1026,118 +1029,105 @@ $(document).ready(function() {
       }
     }
 
-  function selectTwoFunction(select_id){
-    
-      $('.addAll_removeAll_btn').on('select2:open', function() {
-          var $dropdown = $(this);
-          var searchBoxHtml = `
-              
-              <div class="extra-buttons">
-                  <button class="select-all-button" type="button">Select All</button>
-                  <button class="remove-all-button" type="button">Remove All</button>
-              </div>`;
+  function selectTwoFunction(select_id) {
 
-          // Remove any existing extra buttons before adding new ones
-          $('.select2-results .extra-search-container').remove();
-          $('.select2-results .extra-buttons').remove();
+    let $select = $('.js-example-basic-multiple' + select_id);
 
-          // Append the new extra buttons and search box
-          $('.select2-results').prepend(searchBoxHtml);
+    // === 1️⃣ Initialize ONLY if not already initialized ===
+    if ($select.data('select2')) {
+        return; // VERY IMPORTANT: stops re-init
+    }
 
-          // Handle Select All button for the current dropdown
-          $('.select-all-button').on('click', function() {
-              var $currentDropdown = $dropdown;
-              var allValues = $currentDropdown.find('option').map(function() {
-                  return $(this).val();
-              }).get();
-              $currentDropdown.val(allValues).trigger('change');
-          });
+    // === 2️⃣ Load options from UL (clone per dropdown) ===
+    let listId = $select.data('list-id');
+    let items = [];
 
-          // Handle Remove All button for the current dropdown
-          $('.remove-all-button').on('click', function() {
-              var $currentDropdown = $dropdown;
-              $currentDropdown.val(null).trigger('change');
-          });
-      });
-      $('.addAll_removeAll_btn').on('select2:open', function() {
-          var searchBoxHtml = `
-              <div class="extra-search-container">
-                  <input type="text" class="extra-search-box" placeholder="Search...">
-                  <button class="clear-button" type="button">&times;</button>
-              </div>`;
-          
-          if ($('.select2-results').find('.extra-search-container').length === 0) {
-              $('.select2-results').prepend(searchBoxHtml);
-          }
+    $('#' + listId + ' li').each(function() {
+        items.push({
+            id: $(this).data('value'),
+            text: $(this).text()
+        });
+    });
 
-          var $searchBox = $('.extra-search-box');
-          var $clearButton = $('.clear-button');
+    // === 3️⃣ Initialize Select2 (ONLY ON THIS DROPDOWN) ===
+    $select.select2({
+        data: items,
+        width: '100%',
+        closeOnSelect: true
+    });
 
-          $searchBox.on('input', function() {
+    // === 4️⃣ Add Select All / Remove All buttons (SCOPED) ===
+    $select.on('select2:open', function() {
+        let $dropdown = $(this);
 
-              var searchTerm = $(this).val().toLowerCase();
-              $('.select2-results__option').each(function() {
-                  var text = $(this).text().toLowerCase();
-                  if (text.includes(searchTerm)) {
-                      $(this).show();
-                  } else {
-                      $(this).hide();
-                  }
-              });
+        let buttons = `
+        <div class="extra-buttons">
+            <button class="select-all-button" type="button">Select All</button>
+            <button class="remove-all-button" type="button">Remove All</button>
+        </div>
+        `;
 
-              $clearButton.toggle($searchBox.val().length > 0);
-          });
+        $('.select2-results .extra-buttons').remove();
+        $('.select2-results').prepend(buttons);
 
-          $clearButton.on('click', function() {
-              $searchBox.val('');
-              $searchBox.trigger('input');
-          });
-      });
+        $('.select-all-button').off('click').on('click', function() {
+            let allValues = $dropdown.find('option').map(function() {
+                return $(this).val();
+            }).get();
+            $dropdown.val(allValues).trigger('change');
+        });
 
-      $('.js-example-basic-multiple'+select_id).select2();
+        $('.remove-all-button').off('click').on('click', function() {
+            $dropdown.val(null).trigger('change');
+        });
+    });
 
-      // Dynamically add the clear button
-      const clearButton = $('<span class="clear-btn">✖</span>');
-      $('.select2-container').append(clearButton);
+    // === 5️⃣ Add search box (SCOPED) ===
+    $select.on('select2:open', function() {
 
-      // Handle the visibility of the clear button
-      function toggleClearButton() {
+        let searchBoxHtml = `
+        <div class="extra-search-container">
+            <input type="text" class="extra-search-box" placeholder="Search...">
+            <button class="clear-button" type="button">&times;</button>
+        </div>
+        `;
 
-          const selectedOptions = $('.js-example-basic-multiple'+select_id).val();
-          if (selectedOptions && selectedOptions.length > 0) {
-              clearButton.show();
-          } else {
-              clearButton.hide();
-          }
-      }
+        if ($('.select2-results').find('.extra-search-container').length === 0) {
+            $('.select2-results').prepend(searchBoxHtml);
+        }
 
-      // Attach change event to select2
-      $('.js-example-basic-multiple'+select_id).on('change', toggleClearButton);
+        $('.extra-search-box').off('input').on('input', function() {
+            let searchTerm = $(this).val().toLowerCase();
 
-      // Clear button click event
-      clearButton.click(function() {
+            $('.select2-results__option').each(function() {
+                let text = $(this).text().toLowerCase();
+                $(this).toggle(text.includes(searchTerm));
+            });
+        });
 
-          $('.js-example-basic-multiple'+select_id).val(null).trigger('change');
-          toggleClearButton();
-      });
+        $('.clear-button').off('click').on('click', function() {
+            $('.extra-search-box').val('').trigger('input');
+        });
+    });
 
-      // Initial check
-      toggleClearButton();
-      $('.js-example-basic-multiple'+select_id).each(function() {
-          let listId = $(this).data('list-id');
+    // === 6️⃣ Clear button PER DROPDOWN (not global) ===
+    let clearButton = $('<span class="clear-btn">✖</span>');
+    $select.next('.select2').append(clearButton);
 
-          let items = [];
-          console.log("listId",listId);
-          $('#' + listId + ' li').each(function() {
-              console.log("value",$(this).data('value'));
-              items.push({ id: $(this).data('value'), text: $(this).text() });
-          });
-          console.log("items",items);
-          $(this).select2({
-              data: items
-          });
-      });
+    function toggleClearButton() {
+        let val = $select.val();
+        clearButton.toggle(!!(val && val.length));
+    }
+
+    $select.on('change', toggleClearButton);
+    clearButton.on('click', function() {
+        $select.val(null).trigger('change');
+        toggleClearButton();
+    });
+
+    toggleClearButton();
   }
+
 </script>  
 <script type="text/javascript">
   $(document).ready(function() {

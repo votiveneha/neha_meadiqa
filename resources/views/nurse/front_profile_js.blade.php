@@ -1,6 +1,11 @@
 <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> -->
 <script>
     $(document).ready(function() {
+
+        let $activeRow = $(".profession-row.active");
+        console.log("activeRow",$activeRow);
+        $("table tbody").prepend($activeRow);
+        
         // Mandatory Training and Education
         $('.js-example-basic-multiple[data-list-id="mandatory_courses"]').on('change', function() {
             let selectedValues = $(this).val();
