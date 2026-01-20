@@ -1330,6 +1330,34 @@ p.highlight-text {
                             
                             $mainspecility_json = (!empty($specility_data))?json_encode((string)$specility_data->parent):'';
                             $subspecility_json = (!empty($profession_single_data))?json_encode($profession_single_data->specialties):'';
+
+                           
+                            $speciality_id_array = [];
+                            $parentIds = [];
+
+                            while ($profession_specility_id != 0) {
+
+                                $row = DB::table('speciality')
+                                    ->where('id', $profession_specility_id)
+                                    ->first();
+
+                                if (!$row) break; // safety check
+
+                                $parentIds[] = $row->parent; // store parent id
+
+                                $profession_specility_id = $row->parent; // move to next parent
+                            }
+
+                            $parents = array_reverse($parentIds);
+
+                            $parents1 = array_values(
+                                            array_reverse(
+                                                array_filter($parentIds, fn($v) => $v != 0)
+                                            )
+                                        ); 
+
+                            print_r($parents1);
+                            
                         @endphp
                         <input type="hidden" name="btn_name" value="@if($btn_name != '') edit @endif">
                         <input type="hidden" name="user_id" class="user_id" value="{{ Auth::guard('nurse_middle')->user()->id }}">
@@ -1382,7 +1410,7 @@ p.highlight-text {
                                 <div class="form-group drp--clr">
                                   <label class="form-label" for="input-1">Specialties</label>
                                   <input type="hidden" name="subspecialitynurse_list" class="subspecnurse_list" value="{{ $profession_single_data->nurse_data }}">
-                                  <input type="hidden" name="speciality_value" class="speciality_value" value="{{ $btn_name == 'edit' ? $mainspecility_json:'' }}">
+                                  <input type="hidden" name="speciality_value" class="speciality_value" value="{{ $btn_name == 'edit' ? json_encode($parents1[0]):'' }}">
                                   <ul id="speciality_preferences-{{ $profession_single_data->nurse_data }}-0" style="display:none;">
                                     @php $JobSpecialties = JobSpecialties(); @endphp
                                     <?php
@@ -1398,7 +1426,205 @@ p.highlight-text {
                                   <select class="js-example-basic-multiple addAll_removeAll_btn speciality_type_field" data-list-id="speciality_preferences-{{ $profession_single_data->nurse_data }}-0" name="nurseType[{{ $profession_single_data->nurse_data }}][type_0][]" onchange="getSecialities('main',{{ $profession_single_data->nurse_data }},0)"></select>
                                   <span id="reqspecialties" class="reqError text-danger valley"></span>
                                 </div>
-                                <div class="show_specialities-{{ $profession_single_data->nurse_data }}-{{ $specility_data->parent }}">
+
+                                <div class="show_specialities-{{ $profession_single_data->nurse_data }}-0">
+                                  <?php
+                                    $i = 0;
+                                  ?>
+                                  @foreach ($parents1 as $index=>$id)
+                                      <?php
+                                        $sp_data_name = DB::table("speciality")->where('id', $id)->first();
+                                        $sp_data = DB::table("speciality")->where('parent', $id)->get();
+                                      ?>  
+                                      @if($index > 0)
+                                      <div class="show_specialities-{{ $profession_single_data->nurse_data }}-{{ $parents1[$index-1] }}">  
+                                      @endif
+                                      <div class="subspec_main_div subspec_main_div-{{ $profession_single_data->nurse_data }}-{{ $id }}">
+                                        <input type="hidden" name="subspectype" class="subspectype-{{ $id }}" value="{{ isset($parents1[$i+1])?json_encode((string)$parents1[$i+1]):$subspecility_json }}">  
+                                        <div class="subspec_div form-group level-drp">
+                                          <label class="form-label">{{ $sp_data_name->name }}</label>
+
+                                          <input type="hidden" class="subspec_list subspec_listProf-{{ $id }} subspec_list-{{ $id }}" value="{{ $id }}">
+
+                                          <ul id="speciality_preferences-{{ $profession_single_data->nurse_data }}-{{ $id }}" style="display:none;">
+                                            @foreach($sp_data as $sd)
+                                            <li data-value="{{ $sd->id }}">{{ $sd->name }}</li>
+                                            @endforeach
+                                          </ul>
+
+                                          <select class="js-example-basic-multiple subspec_valid-{{ $specility_data->parent }} addAll_removeAll_btn"
+                                                  data-list-id="speciality_preferences-{{ $profession_single_data->nurse_data }}-{{ $id }}"
+                                                  name="nurseType[{{ $profession_single_data->nurse_data }}][type_{{ $id }}][]"
+                                                  
+                                                  onchange="getSecialities('main', {{ $profession_single_data->nurse_data }}, {{ $id }})">
+                                          </select>
+                                        </div>
+                                        @if($index == count($parents1) - 1)
+                                        <div class="show_specialitiesStatus-{{ $profession_single_data->nurse_data }}-{{ $id }}">
+                                          <div class="subspecprofdiv subspecprofdiv-{{ $profession_single_data->nurse_data }}-{{ $profession_single_data->specialties }}">
+                                            <div class="custom-select-wrapper">
+                                                <?php
+                                                    $sp_data_name_status = DB::table("speciality")->where('id', $profession_single_data->specialties)->first();
+                                                    $speciality_status_data = DB::table("speciality_status")->get();
+                                                  ?>
+                                                <label class="form-label">
+                                                    Specialty Status ({{ $sp_data_name_status->name }})
+                                                    
+                                                    <span class="info tooltip-btn" tabindex="0" aria-describedby="statusTooltip">ⓘ</span>
+                                                    <ul class="tooltip_speciality_status" style="padding-left:18px; margin:8px 0 0 0">
+                                                      <li><strong>Status definitions:</strong></li>
+                                                      <li><strong>Current:</strong> Actively practicing, used in present or most recent job.</li>
+                                                      <li><strong>Principal:</strong> Main/strongest specialty (only one allowed).</li>
+                                                      <li><strong>First:</strong> First-ever specialty after qualification.</li>
+                                                      <li><strong>Former:</strong> Previously practiced.</li>
+                                                      <li><strong>Upskilling / Transitioning / Training:</strong> Moving into this specialty.</li>
+                                                      <li><strong>—</strong> (No status selected — default when nurse doesn’t pick one).</li>
+                                                    </ul>
+                                                </label>
+                                                <input type="hidden" name="subspecprof_list" class="subspecprof_list subspecprofpart_list-{{ $profession_single_data->specialties }} subspecprof_listProfession subspecprof_listProfession-{{ $specility_data->parent }} subspecprof_list-{{ $specility_data->parent }}" value="{{ $specility_data->parent }}">
+                                                
+                                                <select class="custom-select speciality_status_columns-{{ $profession_single_data->specialties }}"
+                                                    name="nurseType[{{ $profession_single_data->nurse_data }}][speciality_status][type_{{ $profession_single_data->specialties }}][status]">
+                                                    <option value="">select</option>
+                                                    @foreach($speciality_status_data as $s_status_data)
+                                                      
+                                                        <option value="{{ $s_status_data->status_name }}" @if($s_status_data->status_name == $profession_single_data->speciality_status) selected @endif>{{ $s_status_data->status_name }}</option>
+                                                        @endforeach
+                                                </select>
+                                                <span id="reqsubspeclevelvalid-{{ $specility_data->parent }}" class="reqError text-danger valley"></span>
+                                            </div>
+                                            <div class="custom-select-wrapper form-group level-drp">
+                                              <label class="form-label" for="input-1">What is your overall level of experience in nursing/midwifery?
+                                              </label>
+                                              <select class="custom-select" name="nurseType[{{ $profession_single_data->nurse_data }}][speciality_status][type_{{ $profession_single_data->specialties }}][assistent_level]">
+                                                <option value="">Please Select</option>
+                                                @for($i = 1; $i <= 30; $i++) <option value="{{ $i }}" @if($profession_single_data->assistent_level == $i && $btn_name != '') selected @endif>{{ $i }}{{ $i == 1 ? 'st' : ($i == 2 ? 'nd' : ($i == 3 ? 'rd' : 'th')) }} Year</option>
+                                                @endfor
+                                              </select>
+                                              <span id="reqassistentlevel" class="reqError text-danger valley"></span>
+                                            </div>
+                                            <div class="professional_bio professional_employee_status">
+                                              <div class="custom-select-wrapper form-group level-drp col-md-12">
+                                                <label class="form-label" for="input-1">Current Employment Status</label>
+                                                <select class="custom-select" name="nurseType[{{ $profession_single_data->nurse_data }}][speciality_status][type_{{ $profession_single_data->specialties }}][employee_status]" onchange="employeeStatus(this.value,{{ $profession_single_data->nurse_data }},{{ $specility_data->parent }})">
+                                                  <option value="">select</option>
+                                                  <option value="Permanent" @if($profession_single_data->current_employee_status == "Permanent") selected @endif>Permanent</option>
+                                                  <option value="Fixed-term" @if($profession_single_data->current_employee_status == "Fixed-term") selected @endif>Fixed-term</option>
+                                                  <option value="Temporary" @if($profession_single_data->current_employee_status == "Temporary") selected @endif>Temporary</option>
+                                                  <option value="Unemployed" @if($profession_single_data->current_employee_status == "Unemployed") selected @endif>Unemployed</option>
+                                                </select>
+                                              </div>
+                                              <span id="reqemployee_status" class="reqError text-danger valley"></span>
+                                            </div>
+                                            <div class="professional_permanent-{{ $profession_single_data->nurse_data }}-{{ $profession_single_data->specialties }}" @if($profession_single_data->permanent_status == "select") style="display:none;" @endif>
+                                              <div class="form-group level-drp col-md-12">
+                                                <label class="form-label" for="input-1">Permanent</label>
+                                                <input type="hidden" name="perhfield" class="perhfield" value="{{ $profession_single_data->permanent_status }}">
+                                                <ul id="permanent_status_profession" style="display:none;">
+                                                  <li data-value="">select</li>
+                                                  <li data-value="Full-time (Permanent)">Full-time (Permanent)</li>
+                                                  <li data-value="Part-time (Permanent)">Part-time (Permanent)</li>
+                                                  <li data-value="Agency Nurse / Midwife (Permanent)">Agency Nurse / Midwife (Permanent)</li>
+                                                  <li data-value="Staffing Agency Nurse (Permanent)">Staffing Agency Nurse (Permanent)</li>
+                                                  <li data-value="Private Healthcare Agency Nurse (Permanent)">Private Healthcare Agency Nurse (Permanent)</li>
+                                                  <li data-value="Freelance (Permanent)">Freelance (Permanent)</li>
+                                                  <li data-value="Self-Employed (Permanent)">Self-Employed (Permanent)</li>
+                                                  <li data-value="Private Practice (Permanent)">Private Practice (Permanent)</li>
+                                                  <li data-value="Volunteer (Permanent)">Volunteer (Permanent)</li>
+                                                  
+                                                </ul>
+                                                <select class="js-example-basic-multiple" data-list-id="permanent_status_profession" name="nurseType[{{ $profession_single_data->nurse_data }}][speciality_status][type_{{ $specility_data->parent }}][permanent_status]" id="permanent_status"></select>
+                                                <span id="reqemployeep_status" class="reqError text-danger valley"></span>
+                                              </div>
+                                            </div>
+                                            <div class="professional_temporary-{{ $profession_single_data->nurse_data }}-{{ $profession_single_data->specialties }}"  @if($profession_single_data->temporary_status == "select") style="display:none;" @endif>
+                                              <div class="form-group level-drp col-md-12">
+                                                <label class="form-label" for="input-1">Temporary</label>
+                                                <input type="hidden" name="temphfield" class="temphfield" value="">
+                                                
+                                                <ul id="temporary_status_profession" style="display:none;">
+                                                  <li data-value="select">select</li>
+                                                  <li data-value="Full-time (Temporary)">Full-time (Temporary)</li>
+                                                  <li data-value="Part-time (Temporary)">Part-time (Temporary)</li>
+                                                  <li data-value="Agency Nurse/Midwife (Temporary)">Agency Nurse/Midwife (Temporary)</li>
+                                                  <li data-value="Staffing Agency Nurse (Temporary)">Staffing Agency Nurse (Temporary)</li>
+                                                  <li data-value="Private Healthcare Agency Nurse (Temporary)">Private Healthcare Agency Nurse (Temporary)</li>
+                                                  <li data-value="Travel">Travel</li>
+                                                  <li data-value="Per Diem (Daily Basis)">Per Diem (Daily Basis)</li>
+                                                  <li data-value="Float Pool & Relief Nursing (Multi-Department Work)">Float Pool & Relief Nursing (Multi-Department Work)
+                                                  <li data-value="On-Call (Immediate Availability)">On-Call (Immediate Availability)</li>
+                                                  <li data-value="PRN (Pro Re Nata /As Needed)">PRN (Pro Re Nata /As Needed)</li>
+                                                  <li data-value="Casual">Casual</li>
+                                                  <li data-value="Locum tenens (temporary substitute)">Locum tenens (temporary substitute)</li>
+                                                  <li data-value="Seasonal (Short-Term for Peak Demand)">Seasonal (Short-Term for Peak Demand)</li>
+                                                  <li data-value="Freelance (Temporary)">Freelance (Temporary)</li>
+                                                  <li data-value="Self-Employed (Temporary)">Self-Employed (Temporary)</li>
+                                                  <li data-value="Private Practice (Temporary)">Private Practice (Temporary)</li>
+                                                  <li data-value="Internship">Internship</li>
+                                                  <li data-value="Apprenticeship">Apprenticeship</li>
+                                                  <li data-value="Residency">Residency</li>
+                                                  <li data-value="Volunteer (Temporary)">Volunteer (Temporary)</li>
+                                                </ul>
+                                                <select class="js-example-basic-multiple" data-list-id="temporary_status_profession" name="nurseType[{{ $profession_single_data->nurse_data }}][speciality_status][type_{{ $profession_single_data->specialties }}][temporary_status]" id="temporary_status_profession"></select>
+                                                <span id="reqemployeet_status" class="reqError text-danger valley"></span>
+                                              </div>
+                                              
+                                            </div>
+                                            <div class="custom-select-wrapper professional_unemplyeed-{{ $profession_single_data->nurse_data }}-{{ $profession_single_data->specialties }}" @if($profession_single_data->unemployeed_reason == NULL) style="display:none;" @endif>
+                                              <div class="form-group level-drp col-md-12">
+                                                <label class="form-label" for="input-1">Reason for Unemployment</label>
+                                                <!-- <input class="form-control" type="text" required="" name="fullname" placeholder="Steven Job"> -->
+                                                <select class="custom-select mr-10 select-active unemployeement_reason" name="nurseType[{{ $profession_single_data->nurse_data }}][speciality_status][type_{{ $profession_single_data->specialties }}][unemployeement_reason]" id="unemployeement_reason" onchange="reasonUnemployeement(this.value,{{ $profession_single_data->nurse_data }},{{ $profession_single_data->specialties }})">
+                                                  <option value="">select</option>
+                                                  <option value="Recently graduated" @if($profession_single_data->current_employee_status == "Recently graduated") selected @endif>Recently graduated</option>
+                                                  <option value="Career break (maternity leave, family reasons, etc.)" @if($profession_single_data->current_employee_status == "Career break (maternity leave, family reasons, etc.)") selected @endif>Career break (maternity leave, family reasons, etc.)</option>
+                                                  <option value="Transitioning from another job" @if($profession_single_data->current_employee_status == "Transitioning from another job") selected @endif>Transitioning from another job</option>
+                                                  <option value="Retired but seeking work" @if($profession_single_data->current_employee_status == "Retired but seeking work") selected @endif>Retired but seeking work</option>
+                                                  <option value="Laid off / Contract ended" @if($profession_single_data->current_employee_status == "Laid off / Contract ended") selected @endif>Laid off / Contract ended</option>
+                                                  <option value="Other (Please specify)" @if($profession_single_data->current_employee_status == "Other (Please specify)") selected @endif>Other (Please specify)</option>
+                                                </select>
+                                              </div>
+                                              <span id="requnempreason" class="reqError text-danger valley"></span>
+                                            </div>
+                                            <div class="form-group @if($profession_single_data->unemployeed_reason == NULL) d-none @endif specify_reason_div-{{ $profession_single_data->nurse_data }}-{{ $profession_single_data->specialties }}">
+                                              <label class="form-label" for="input-1">Other (Please specify)</label>
+                                              
+                                              <input class="form-control" type="text" name="specify_reason" value="">
+                                              <span id="otherspecify_reason" class="reqError text-danger valley"></span>
+                                            </div>
+                                            <div class="custom-select-wrapper long_unemplyeed-{{ $profession_single_data->nurse_data }}-{{ $profession_single_data->specialties }}  @if($profession_single_data->long_unemplyeed == NULL) d-none @endif">
+                                              <div class="form-group level-drp col-md-12">
+                                                <label class="form-label" for="input-1">How long have you been unemployed?</label>
+                                                <!-- <input class="form-control" type="text" required="" name="fullname" placeholder="Steven Job"> -->
+                                                <select class="custom-select long_unemployeed" name="nurseType[{{ $profession_single_data->nurse_data }}][speciality_status][type_{{ $profession_single_data->specialties }}][long_unemployeed]" id="long_unemployeed">
+                                                  <option value="">select</option>
+                                                  <option value="Less than 1 month" @if($profession_single_data->current_employee_status == "Less than 1 month") selected @endif>Less than 1 month</option>
+                                                  <option value="1 to 3 months" @if($profession_single_data->current_employee_status == "1 to 3 months") selected @endif>1 to 3 months</option>
+                                                  <option value="3 to 6 months" @if($profession_single_data->current_employee_status == "3 to 6 months") selected @endif>3 to 6 months</option>
+                                                  <option value="6 months to 1 year" @if($profession_single_data->current_employee_status == "6 months to 1 year") selected @endif>6 months to 1 year</option>
+                                                  <option value="More than 1 year" @if($profession_single_data->current_employee_status == "More than 1 year") selected @endif>More than 1 year</option>
+                                                  
+                                                </select>
+                                                <span id="reqlong_unemp" class="reqError text-danger valley"></span>
+                                              </div>
+                                              
+                                            </div>
+                                          </div>
+                                        </div>
+                                        @endif
+                                        <?php
+                                          $i++;
+                                        ?>
+                                  @endforeach
+
+                                  @for ($i = count($parents1); $i > 0; $i--)
+                                        @if(isset($parents1[$i+1]))
+                                      </div>  
+                                        @endif
+                                      </div>
+                                  @endfor
+                                </div>
+                                <div class="show_specialities-{{ $profession_single_data->nurse_data }}-{{ $specility_data->parent }}" style="display:none;">
                                   <div class="subspec_main_div subspec_main_div-{{ $profession_single_data->nurse_data }}-{{ $specility_data->parent }}"
                                   >
                                   <?php
@@ -7663,16 +7889,41 @@ if (!empty($interviewReferenceData)) {
     $('.js-example-basic-multiple[data-list-id="speciality_preferences-'+subspecialitynurse_list+'-0"]').select2().val(speciality_value).trigger('change');
   }
 
-  $(".subspec_list").each(function(){
-    var subspec_val = $(this).val();
-    if ($(".subspectype-"+subspec_val).val() != "") {
-      var spec_type = JSON.parse($(".subspectype-"+subspec_val).val());
-      console.log("spec_types",spec_type);
-      var subspecialitynurse_list = $(".subspecialitynurse_list").val();
-      $('.js-example-basic-multiple[data-list-id="speciality_preferences-'+subspecialitynurse_list+"-"+subspec_val+'"]').select2().val(spec_type).trigger('change');
-    }
-  });
+  // $(".subspec_list").each(function(){
+  //   var subspec_val = $(this).val();
+  //   if ($(".subspectype-"+subspec_val).val() != "") {
+  //     var spec_type = JSON.parse($(".subspectype-"+subspec_val).val());
+  //     console.log("spec_types",subspec_val);
+  //     var subspecialitynurse_list = $(".subspecnurse_list").val();
+  //     //$('.js-example-basic-multiple[data-list-id="speciality_preferences-'+subspec_val+'"]').select2().val(spec_type).trigger('change');
+  //     $('.js-example-basic-multiple[data-list-id="speciality_preferences-'
+  //       + subspecialitynurse_list + '-'+subspec_val+'"]')
+  //       .select2()
+  //       .val(spec_type)
+  //       .trigger('change');
+  //   }
+  // });
 
+//   if ($(".subspectype-98").val() != "") {
+//     // Get raw value and clean it
+//     var spec_type = $(".subspectype-98").val()
+//         .replace(/&quot;/g, '"'); // decode HTML quotes
+
+//     spec_type = JSON.parse(spec_type); // now gives "630"
+
+//     let arr = Array.isArray(spec_type) ? spec_type : [spec_type];
+
+    
+
+//     var subspecialitynurse_list = $(".subspecialitynurse_list").val();
+//     console.log("spec_types", subspecialitynurse_list);
+//     $('.js-example-basic-multiple[data-list-id="speciality_preferences-'+subspecialitynurse_list+'-98"]')
+//         .select2()
+//         .val(arr)
+//         .trigger('change');
+// }
+
+  
   
 
   if ($(".nursing_result_one").val() != "") {
@@ -8675,133 +8926,133 @@ function getSecialitiesExperience(level,k,x){
  var specialityTree = {};
 var specialityStatus = {};
 
-try {
-    specialityTree = JSON.parse(@json($user_data->specialties));
-    specialityStatus = specialityTree.speciality_status || {};
-} catch (e) {}
+// try {
+//     specialityTree = JSON.parse(@json($user_data->specialties));
+//     specialityStatus = specialityTree.speciality_status || {};
+// } catch (e) {}
 
-$('.show_specialitiesStatus').remove(); // remove previously attached ones
-console.log("specialityTree",specialityTree);
-$.each(specialityTree, function (parentKey, children) {
+// $('.show_specialitiesStatus').remove(); // remove previously attached ones
+// console.log("specialityTree",specialityTree);
+// $.each(specialityTree, function (parentKey, children) {
 
-    if (parentKey === 'speciality_status') return;
-    if (!Array.isArray(children)) return;
+//     if (parentKey === 'speciality_status') return;
+//     if (!Array.isArray(children)) return;
 
-    const parentId = parentKey.replace('type_', '');
+//     const parentId = parentKey.replace('type_', '');
 
-    children.forEach(function (childId) {
+//     children.forEach(function (childId) {
 
-        $('.subspec_main_div-' + childId).not(':first').remove();
+//         $('.subspec_main_div-' + childId).not(':first').remove();
 
-        const $parentDiv = $('.subspec_main_div-' + parentId);
-        const $childDiv  = $('.subspec_main_div-' + childId);
-        if (!$parentDiv.length || !$childDiv.length) return;
+//         const $parentDiv = $('.subspec_main_div-' + parentId);
+//         const $childDiv  = $('.subspec_main_div-' + childId);
+//         if (!$parentDiv.length || !$childDiv.length) return;
 
-        let $wrapper = $parentDiv.children('.show_specialities-' + parentId);
-        if (!$wrapper.length) {
-            $wrapper = $('<div/>', {
-                class: 'show_specialities show_specialities-' + parentId
-            }).appendTo($parentDiv);
-        }
+//         let $wrapper = $parentDiv.children('.show_specialities-' + parentId);
+//         if (!$wrapper.length) {
+//             $wrapper = $('<div/>', {
+//                 class: 'show_specialities show_specialities-' + parentId
+//             }).appendTo($parentDiv);
+//         }
 
-        /* destroy select2 before move */
-        $childDiv.find('select').each(function () {
-            if ($(this).data('select2')) {
-                $(this).select2('destroy');
-            }
-        });
+//         /* destroy select2 before move */
+//         $childDiv.find('select').each(function () {
+//             if ($(this).data('select2')) {
+//                 $(this).select2('destroy');
+//             }
+//         });
 
-        $wrapper.append($childDiv);
+//         $wrapper.append($childDiv);
 
-        /* 🔥 GET ONE STATUS TEMPLATE */
-        let $statusTemplate = $('.status-template').first();
-        if (!$statusTemplate.length) return;
+//         /* 🔥 GET ONE STATUS TEMPLATE */
+//         let $statusTemplate = $('.status-template').first();
+//         if (!$statusTemplate.length) return;
 
-        // /* clone */
-        let $statusClone = $statusTemplate.clone(true, true);
+//         // /* clone */
+//         let $statusClone = $statusTemplate.clone(true, true);
 
-        // /* make visible */
-        $statusClone.removeClass('d-none status-template');
+//         // /* make visible */
+//         $statusClone.removeClass('d-none status-template');
 
-        // /* clean select2 */
-        $statusClone.find('select')
-        .removeClass('select2-hidden-accessible')
-        .removeAttr('data-select2-id')
-        .next('.select2').remove();
+//         // /* clean select2 */
+//         $statusClone.find('select')
+//         .removeClass('select2-hidden-accessible')
+//         .removeAttr('data-select2-id')
+//         .next('.select2').remove();
 
-        // /* set saved value */
-        let savedStatus = specialityStatus['type_' + childId]?.status || '';
-        $statusClone.find('select').val(savedStatus);
+//         // /* set saved value */
+//         let savedStatus = specialityStatus['type_' + childId]?.status || '';
+//         $statusClone.find('select').val(savedStatus);
 
-        /* attach */
-        $childDiv.after($statusClone);
+//         /* attach */
+//         $childDiv.after($statusClone);
 
-        /* init select2 */
-        $statusClone.find('select').select2({ width: '100%' });
-        $childDiv.find('select').select2({ width: '100%' });
+//         /* init select2 */
+//         $statusClone.find('select').select2({ width: '100%' });
+//         $childDiv.find('select').select2({ width: '100%' });
 
-        console.log("childId",childId);
+//         console.log("childId",childId);
         
-    });
+//     });
 
-    children.forEach(function (childId) {
+//     children.forEach(function (childId) {
 
        
-        var j = 1;
-        $(".subspec_list_experience_count").each(function(){
-        //for experience
-        $('.subspec_main_div_experience-' + childId).not(':first').remove();
+//         var j = 1;
+//         $(".subspec_list_experience_count").each(function(){
+//         //for experience
+//         $('.subspec_main_div_experience-' + childId).not(':first').remove();
 
-        const $parentDiv_exp = $('.subspec_main_div_experience-' + parentId);
-        const $childDiv_exp  = $('.subspec_main_div_experience-' + childId);
-        if (!$parentDiv_exp.length || !$childDiv_exp.length) return;
+//         const $parentDiv_exp = $('.subspec_main_div_experience-' + parentId);
+//         const $childDiv_exp  = $('.subspec_main_div_experience-' + childId);
+//         if (!$parentDiv_exp.length || !$childDiv_exp.length) return;
 
-        let $wrapper_exp = $parentDiv_exp.children('.show_specialitiesExperience-'+j+'-' + parentId);
-        if (!$wrapper_exp.length) {
-            $wrapper_exp = $('<div/>', {
-                class: 'show_specialitiesExperience show_specialitiesExperience-'+j+'-' + parentId
-            }).appendTo($parentDiv_exp);
-        }
+//         let $wrapper_exp = $parentDiv_exp.children('.show_specialitiesExperience-'+j+'-' + parentId);
+//         if (!$wrapper_exp.length) {
+//             $wrapper_exp = $('<div/>', {
+//                 class: 'show_specialitiesExperience show_specialitiesExperience-'+j+'-' + parentId
+//             }).appendTo($parentDiv_exp);
+//         }
 
-        /* destroy select2 before move */
-        $childDiv_exp.find('select').each(function () {
-            if ($(this).data('select2')) {
-                $(this).select2('destroy');
-            }
-        });
+//         /* destroy select2 before move */
+//         $childDiv_exp.find('select').each(function () {
+//             if ($(this).data('select2')) {
+//                 $(this).select2('destroy');
+//             }
+//         });
 
-        $wrapper_exp.append($childDiv_exp);
+//         $wrapper_exp.append($childDiv_exp);
 
-        /* 🔥 GET ONE STATUS TEMPLATE */
-        let $statusTemplate_exp = $('.status-template-exp').first();
-        if (!$statusTemplate_exp.length) return;
+//         /* 🔥 GET ONE STATUS TEMPLATE */
+//         let $statusTemplate_exp = $('.status-template-exp').first();
+//         if (!$statusTemplate_exp.length) return;
 
-        /* clone */
-        let $statusClone_exp = $statusTemplate_exp.clone(true, true);
+//         /* clone */
+//         let $statusClone_exp = $statusTemplate_exp.clone(true, true);
 
-        /* make visible */
-        $statusClone_exp.removeClass('d-none status-template-exp');
+//         /* make visible */
+//         $statusClone_exp.removeClass('d-none status-template-exp');
 
-        /* clean select2 */
-        $statusClone_exp.find('select')
-            .removeClass('select2-hidden-accessible')
-            .removeAttr('data-select2-id')
-            .next('.select2').remove();
+//         /* clean select2 */
+//         $statusClone_exp.find('select')
+//             .removeClass('select2-hidden-accessible')
+//             .removeAttr('data-select2-id')
+//             .next('.select2').remove();
 
-        /* set saved value */
-        let savedStatus_exp = specialityStatus['type_' + childId]?.status || '';
-        $statusClone_exp.find('select').val(savedStatus);
+//         /* set saved value */
+//         let savedStatus_exp = specialityStatus['type_' + childId]?.status || '';
+//         $statusClone_exp.find('select').val(savedStatus);
 
-        /* attach */
-        $childDiv_exp.after($statusClone_exp);
+//         /* attach */
+//         $childDiv_exp.after($statusClone_exp);
 
-        /* init select2 */
-        $statusClone_exp.find('select').select2({ width: '100%' });
-        $childDiv_exp.find('select').select2({ width: '100%' });
-        j++;
-        });
-    });
-});
+//         /* init select2 */
+//         $statusClone_exp.find('select').select2({ width: '100%' });
+//         $childDiv_exp.find('select').select2({ width: '100%' });
+//         j++;
+//         });
+//     });
+// });
   function getSecialities(level,nurse_id, k) {
 
     
