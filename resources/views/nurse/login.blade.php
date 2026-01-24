@@ -43,12 +43,7 @@
                                           if($prefix == "healthcare-facilities"){
                                             $action = route('medical-facilities.userloginAction');
                                           }else{
-                                            if($prefix == "agencies"){
-                                              $action = route('agencies.userloginAction');
-                                            }else{
-                                              $action = route('nurse.userloginAction');
-                                            }
-                                            
+                                            $action = route('nurse.userloginAction');
                                           }
                                         ?>
                <form class="login-register text-start mt-20" method="post" action="{{ $action }}">

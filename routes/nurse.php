@@ -39,15 +39,13 @@ Route::post('/getsurgicalSpeciality', 'App\Http\Controllers\HomeController@getsu
 Route::post('/getsurgicalSubSpeciality', 'App\Http\Controllers\HomeController@getsurgicalSubSpeciality')->name('getsurgicalSubSpeciality');
 
 Route::prefix('healthcare-facilities')->name('medical-facilities.')->namespace('App\Http\Controllers\medical_facilities')->group(function () {
-  
   Route::get('/', 'HomeController@index_main')->name('medical_facilities_home_main');
   Route::get('/medical-facilities-registraion', 'HomeController@registraion')->name('medical-facilities-registraion');
+  Route::post('/healthcareRegistration', 'HomeController@healthcareRegistration')->name('healthcareRegistration');
   Route::get('/email-verification-pending', 'HomeController@emailVerificationPending')->name('email-verification-pending');
   Route::get('/profile-under-reviewed', 'HomeController@profileUnderReviewed')->name('profile-under-reviewed');
-  Route::post('/healthcareRegistration', 'HomeController@healthcareRegistration')->name('healthcareRegistration');
   Route::get('/login', 'HomeController@login')->name('login');
   Route::post('/userloginAction', 'HomeController@userloginAction')->name('userloginAction');
-  
   Route::get('/logout', 'HomeController@logout')->name('logout');
   Route::middleware('healthcare')->group(function () {
     Route::get('/my-profile', 'HomeController@manage_profile')->name('my-profile');
@@ -58,6 +56,7 @@ Route::prefix('agencies')->name('agencies.')->namespace('App\Http\Controllers\ag
   Route::get('/', 'HomeController@index_main')->name('agencies_home_main');
   Route::get('/agencies-registraion', 'HomeController@registraion')->name('agencies-registraion');
   Route::get('/login', 'HomeController@login')->name('login');
+
   Route::post('/agenciesRegistration', 'HomeController@agenciesRegistration')->name('agenciesRegistration');
   Route::get('/email-verification-pending', 'HomeController@emailVerificationPending')->name('email-verification-pending');
   Route::get('/profile-under-reviewed', 'HomeController@profileUnderReviewed')->name('profile-under-reviewed');
@@ -114,7 +113,7 @@ Route::prefix('nurse')->name('nurse.')->namespace('App\Http\Controllers\nurse')-
     Route::get('/my-profile', 'HomeController@manage_profile')->name('my-profile');
     Route::get('/dashboard', 'HomeController@dashboard')->name('dashboard');
     Route::post('/changepassword', 'HomeController@changepassword')->name('changepassword');
-    Route::post('/updateProfile', 'HomeController@updateProfile')->name('updateProfile');
+    Route::any('/updateProfile', 'HomeController@updateProfile')->name('updateProfile');
     Route::post('/user-upload-image', 'HomeController@upload_profile_image')->name('user-upload-image');
     Route::post('/change_password', 'HomeController@change_password')->name('change_password');
     Route::post('/update-profession', 'HomeController@update_profession')->name('update-profession');
@@ -124,16 +123,16 @@ Route::prefix('nurse')->name('nurse.')->namespace('App\Http\Controllers\nurse')-
     Route::post('/remove-registration-evidence', 'HomeController@removeRegistrationEvidence')->name('nurse.removeRegistrationEvidence');
     Route::post('/remove-registration-country', 'HomeController@remove_registration_country')->name('nurse.remove-registration-country');
     Route::post('/remove-qualification-country', 'HomeController@remove_qualification_country')->name('nurse.remove-qualification-country');
-    Route::post('/nurse/save-registration-country', function (Request $request) {
-      auth('nurse_middle')->user()->update([
-        'active_country' => $request->country_id,
-        'country' => $request->country_id,
-        'country_code' => $request->country_code,
-      ]);
+    // Route::post('/nurse/save-registration-country', function (Request $request) {
+    //   auth('nurse_middle')->user()->update([
+    //     'active_country' => $request->country_id,
+    //     'country' => $request->country_id,
+    //     'country_code' => $request->country_code,
+    //   ]);
 
-      return response()->json(['success' => true]);
-    })->name('saveRegistrationCountry');
-    
+    //   return response()->json(['success' => true]);
+    // })->name('saveRegistrationCountry');
+    Route::post('/save-registration-country', 'HomeController@save_registration_country')->name('saveRegistrationCountry');
     Route::post('/update-profession-user-emergency', 'HomeController@update_emergency')->name('update-profession-user-emergency');
     Route::post('/update-profession-profile-setting', 'HomeController@update_profession_profile_setting')->name('update-profession-profile-setting');
     Route::post('/updateProfession', 'HomeController@updateProfession')->name('updateProfession');
@@ -189,8 +188,10 @@ Route::prefix('nurse')->name('nurse.')->namespace('App\Http\Controllers\nurse')-
   Route::post('/uploadLicensesEvidenceImgs', 'LicencesContoller@uploadLicensesEvidenceImgs')->name('uploadLicensesEvidenceImgs');
   Route::post('/deleteLicensesEvidenceImg', 'LicencesContoller@deleteLicensesEvidenceImg')->name('deleteLicensesEvidenceImg');
 	Route::get('/ahpra-lookup/{number}', 'AhpraLookupsController@lookup1')->name('lookup1');
-  
-	/**************[Work Clearance]**************/
+  Route::post('/editedCountryReg', 'LicencesContoller@editedCountryReg')->name('editedCountryReg');
+
+
+    /**************[Work Clearance]**************/
   Route::any('/workClearances','ProfessionalController@workClearances')->name('workClearances');
   Route::post('/update-profession-user-eligibility', 'ProfessionalController@update_eligibility_to_work')->name('update-profession-user-eligibility');
   Route::post('/update-ndis', 'ProfessionalController@updateNdis')->name('update-ndis');
@@ -293,7 +294,7 @@ Route::prefix('nurse')->name('nurse.')->namespace('App\Http\Controllers\nurse')-
   Route::get('getEmptypeData', 'JobsController@getEmptypeData')->name('getEmptypeData');
   Route::get('matchedJobs', 'MatchController@matchedJobs')->name('matchedJobs');
   Route::get('getSpecialityDatas', 'WorkPreferencesController@getSpecialityDatas')->name('getSpecialityDatas');
-  Route::get('getSpecialities', 'HomeController@getSpecialities')->name('getSpecialities');
+  Route::get('deleteSpecialityRows', 'HomeController@deleteSpecialityRows')->name('deleteSpecialityRows');
   
   });
 });

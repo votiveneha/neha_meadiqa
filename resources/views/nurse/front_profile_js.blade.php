@@ -1,11 +1,6 @@
 <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> -->
 <script>
     $(document).ready(function() {
-
-        let $activeRow = $(".profession-row.active");
-        console.log("activeRow",$activeRow);
-        $("table tbody").prepend($activeRow);
-        
         // Mandatory Training and Education
         $('.js-example-basic-multiple[data-list-id="mandatory_courses"]').on('change', function() {
             let selectedValues = $(this).val();
@@ -2686,7 +2681,7 @@
     }
 
     function selectTwoFunction(select_id){
-        
+    
         $('.addAll_removeAll_btn').on('select2:open', function() {
             var $dropdown = $(this);
             var searchBoxHtml = `
@@ -2800,20 +2795,57 @@
 </script>
 <script>
     // exp tab changes
-    $(document).ready(function() {
 
-        var l = 1;
-        $(".nurse_exp_type").each(function() {
+    $(document).ready(function() {
+        console.log('nurse_type_count:', $('.nurse_exp_type').length);
+        var l = 0;
+
+        $(".nurse_exp_type").each(function(index) {
+            var l = index + 1; // 1-based index
+            console.log("nurse_type34",".nurse_exp_type-" + l);
             if ($(".nurse_exp_type-" + l).length > 0) {
+                
                 if ($(".type_nurse_ep-" + l).val() != "") {
-                    // Initialize select2
+                    console.log("nurse_type2","type-of-nurse-experience-"+l+"-0");
                     var nurse_type1 = JSON.parse($(".type_nurse_ep-" + l).val());
-                    console.log("nurse_type1",nurse_type1);
-                    $('#nurse_type_exp-' + l+"-0").select2().val(nurse_type1).trigger('change');
+                    var nurse_type_arr = [nurse_type1];
+                    
+                    console.log("nurse_type1",nurse_type_arr);
+                    //console.log('options:', $select.find('option').map(function(){ return this.value }).get());
+                    //$('#nurse_type_exp-' + l+"-0").select2().val(nurse_type_arr).trigger('change');
+                    $('.js-example-basic-multiple[data-list-id="type-of-nurse-experience-'+l+'-0"]').select2().val(nurse_type_arr).trigger('change');
                 }
             }
-            l++;
+
+            var j = 1;
+            $(".subnurse_list_experience").each(function(){
+                var value = $(this).val();
+                if($(".subnursetypeexperience-" + j+"-"+value).val() != ""){
+                    var subnurse_type1 = JSON.parse($(".subnursetypeexperience-" + j+"-"+value).val());
+                    var subnurse_type_arr = [subnurse_type1];
+                    console.log("subnurse_type1",subnurse_type_arr);
+
+                    $('.js-example-basic-multiple[data-list-id="type-of-nurse-experience-'+j+'-'+value+'"]').select2().val(subnurse_type_arr).trigger('change');
+                }
+                j++;
+            });
+
+            var k = 1;
+            $(".speciality_value_experience").each(function(){
+                var speciality_value = $(this).val();
+                if (speciality_value != "") {
+                    var speciality_type = JSON.parse(speciality_value);
+                    var speciality_type_arr = [speciality_type];
+                    console.log("speciality_type",speciality_type_arr);
+                    $('.js-example-basic-multiple[data-list-id="type-of-nurse-experience-'+l+'-0"]').select2().val(nurse_type_arr).trigger('change');
+                }
+                k++;
+            });
+            
+            // example usage
+            // $(this) refers to the current .nurse_exp_type
         });
+        
 
         $(".subspec_list_experience_count").each(function() {
             var experience_count = $(this).val();

@@ -122,7 +122,7 @@ img, iframe, video {
       }
     });
 </script>
-  
+
   @if (!Auth::guard('nurse_middle')->check() && !Auth::guard('healthcare_facilities')->check() && !Auth::guard('agencies')->check())
   <header class="header sticky-bar top-view-desktop-add without_login">
     <div class="container">
@@ -470,8 +470,9 @@ img, iframe, video {
     </ul>
   </div>
 </div>
+
   @else
-  
+
   @if (Auth::guard('healthcare_facilities')->check())
   <header class="header sticky-bar  border-bottom">
     <div class="container">
