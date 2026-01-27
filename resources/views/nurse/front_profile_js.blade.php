@@ -2795,7 +2795,56 @@
 </script>
 <script>
     // exp tab changes
+    $('.duplicate-exp').click(function(){
+        let currentBlock = $(this).closest('.work_exp');
 
+    // 🔹 Calculate next experience index from DOM
+    let expIndex = $('.work_exp').length + 1;
+
+    // 🔹 Destroy select2 ONLY inside current block
+    currentBlock
+        .find('select.select2-hidden-accessible')
+        .select2('destroy');
+
+    // 🔹 Clone block (no events)
+    let clone = currentBlock.clone(false);
+
+    // 🔹 Update heading
+    clone.find('.previous_employeers_head')
+         .text('Work Experience ' + expIndex);
+
+    // 🔥 UPDATE ALL SELECT IDS + CLEAN SELECT2
+    clone.find('select').each(function () {
+
+        let $select = $(this);
+        let oldId = $select.attr('id');
+
+        if (oldId) {
+            let newId = oldId.replace(
+                /experience-\d+-/,
+                'experience-' + expIndex + '-'
+            );
+            $select.attr('id', newId);
+        }
+
+        // Remove all Select2 artifacts
+        $select
+            .removeClass('select2-hidden-accessible')
+            .removeAttr('data-select2-id')
+            .removeAttr('aria-hidden')
+            .removeAttr('tabindex');
+
+        // Remove generated select2 container if exists
+        $select.next('.select2-container').remove();
+    });
+
+    // 🔹 Append cloned block
+    $('.previous_employeers').append(clone);
+
+    // 🔹 Re-initialize select2 ONLY inside cloned block
+    clone.find('select').select2();
+
+    });
     $(document).ready(function() {
         console.log('nurse_type_count:', $('.nurse_exp_type').length);
         var l = 0;
@@ -2818,17 +2867,7 @@
             }
 
             var j = 1;
-            $(".subnurse_list_experience").each(function(){
-                var value = $(this).val();
-                if($(".subnursetypeexperience-" + j+"-"+value).val() != ""){
-                    var subnurse_type1 = JSON.parse($(".subnursetypeexperience-" + j+"-"+value).val());
-                    var subnurse_type_arr = [subnurse_type1];
-                    console.log("subnurse_type1",subnurse_type_arr);
-
-                    $('.js-example-basic-multiple[data-list-id="type-of-nurse-experience-'+j+'-'+value+'"]').select2().val(subnurse_type_arr).trigger('change');
-                }
-                j++;
-            });
+            
 
             var k = 1;
             $(".speciality_value_experience").each(function(){
@@ -2844,6 +2883,19 @@
             
             // example usage
             // $(this) refers to the current .nurse_exp_type
+        });
+
+        $(".subnurse_list_experience").each(function(){
+            var value = $(this).val();
+            console.log("subnursetypeexperience",value);
+            if($(".subnursetypeexperience-" + j+"-"+value).val() != ""){
+                var subnurse_type1 = JSON.parse($(".subnursetypeexperience-" + j+"-"+value).val());
+                var subnurse_type_arr = [subnurse_type1];
+                console.log("subnurse_type1",subnurse_type_arr);
+
+                $('.js-example-basic-multiple[data-list-id="type-of-nurse-experience-'+j+'-'+value+'"]').select2().val(subnurse_type_arr).trigger('change');
+            }
+            j++;
         });
         
 
@@ -2882,6 +2934,27 @@
                 }
             });  
         });
+
+        
+
+        // $(document).on('click', '.duplicate-exp', function () {
+        //     alert("hello");
+        //     // destroy select2 before clone
+        //     $('.select2').select2('destroy');
+
+        //     let currentBlock = $(this).closest('.work_exp');
+        //     let clone = currentBlock.clone(true);
+
+        //     // update title number
+        //     let count = $('.work_exp').length + 1;
+        //     clone.find('.exp-title').text('Work Experience ' + count);
+
+        //     $('.previous_employeers').append(clone);
+
+        //     // re-init select2
+        //     $('.select2').select2();
+        // });
+
         
         $(document).ready(function () {
             $('.profession_summury_table tbody tr').each(function (index) {

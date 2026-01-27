@@ -4736,8 +4736,8 @@ p.highlight-text {
                                     <li data-value="{{ $nd->id }}">{{ $nd->name }}</li>
                                     @endforeach
                                     </ul>
-                                    <select class="js-example-basic-multiple subnurse_valid-{{ $practitioner_data->parent }} addAll_removeAll_btn" data-list-id="type-of-nurse-experience-{{ $x }}-{{ $practitioner_data->parent }}" name="nurseType[type_{{ $practitioner_data->parent }}][]" onchange="getNurseType('main',{{ $practitioner_data->parent }})"></select>
-                                    <span id="reqsubnursevalid-{{ $practitioner_data->parent }}" class="reqError text-danger valley"></span>
+                                    <select class="js-example-basic-multiple subnurse_experience_valid subnurse_valid-{{ $practitioner_data->parent }} addAll_removeAll_btn" data-list-id="type-of-nurse-experience-{{ $x }}-{{ $practitioner_data->parent }}" name="nurseType[type_{{ $practitioner_data->parent }}][]" onchange="getNurseType('main',{{ $practitioner_data->parent }})"></select>
+                                    <span id="reqsubnurseexperiencevalid-{{ $practitioner_data->parent }}" class="reqError text-danger valley"></span>
                                 </div>
                                 <div class="subnurse_level-{{ $practitioner_data->parent }}"></div>
                             
@@ -5193,14 +5193,21 @@ p.highlight-text {
                         <div class="col-md-12">
                           <!-- Add Delete Button -->
                           <div class="add_new_certification_div_2">
+                            <div class="delete-exp-btn">
                             <a
                               style="cursor: pointer; margin-bottom: 35px !important;"
                               class="delete-work-experience">
                               - Delete Work Experience
                             </a>
-                          
+                            </div>
+                            <div class="duplicate-exp-btn">
+                              <a style="cursor: pointer;margin-top: 20px;" type="button" class="duplicate-exp">
+                              Duplicate
+                              </a> 
+                            </div>
                           </div>
                         </div>
+                              </div>  
                       @php
                         $x++;      
                       @endphp
